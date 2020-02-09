@@ -54,6 +54,7 @@ target_link_libraries(webfused PUBLIC
 )
 
 target_compile_options(webfused PUBLIC ${OPENSSL_CFLAGS_OTHER})
+install(TARGETS webfused DESTINATION bin)
 
 add_executable(webfuse-passwd
 	src/passwd/main.c
@@ -73,3 +74,4 @@ target_include_directories(webfuse-passwd PUBLIC
 )
 
 target_compile_options(webfuse-passwd PUBLIC ${OPENSSL_CFLAGS_OTHER})
+install(TARGETS webfuse-passwd DESTINATION bin)
