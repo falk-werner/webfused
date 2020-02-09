@@ -30,7 +30,7 @@ before_install:
     - mkdir .deps
     - cd .deps
     # libfuse
-    - pip3 install --system meson
+    - sudo pip3 install --system meson
     - wget https://github.com/libfuse/libfuse/archive/fuse-3.9.0.tar.gz -O fuse.tar.gz
     - tar -xf fuse.tar.gz
     - cd libfuse-fuse-3.9.0
@@ -38,7 +38,7 @@ before_install:
     - cd .build
     - meson ..
     - ninja
-    - ninja install
+    - sudo ninja install
     - cd ..
     - cd ..
     # libwebsockets
@@ -49,7 +49,7 @@ before_install:
     - cd .build
     - cmake ..
     - make
-    - make install
+    - sudo make install
     - cd ..
     - cd ..
     # jansson
@@ -60,7 +60,7 @@ before_install:
     - cd .build
     - cmake ..
     - make
-    - make install
+    - sudo make install
     - cd ..
     - cd ..
     # libwebfuse
@@ -71,7 +71,7 @@ before_install:
     - cd .build
     - cmake ..
     - make
-    - make install
+    - sudo make install
     - cd ..
     - cd ..
     - cd ..
