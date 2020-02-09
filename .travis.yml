@@ -64,7 +64,7 @@ before_install:
     - cd ..
     - cd ..
     # libwebfuse
-    - wget https://github.com/falk-werner/webfuse/archive/master.zip -O webfuse.tar.gz
+    - wget https://github.com/falk-werner/webfuse/archive/master.tar.gz -O webfuse.tar.gz
     - tar -xf webfuse.tar.gz
     - cd webfuse-master
     - mkdir .build
