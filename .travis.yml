@@ -69,7 +69,7 @@ before_install:
     - cd webfuse-master
     - mkdir .build
     - cd .build
-    - cmake ..
+    - cmake -DWITHOUT_TESTS=ON -DWITHOUT_EXAMPLE=ON ..
     - make
     - sudo make install
     - cd ..
