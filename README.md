@@ -68,11 +68,11 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
 
 #### webfuse
 
-    wget https://github.com/falk-werner/webfuse/archive/master.tar.gz -O webfuse.tar.gz
+    wget https://github.com/falk-werner/webfuse/archive/v0.2.0.tar.gz -O webfuse.tar.gz
     tar -xf webfuse.tar.gz
-    cd webfuse-master
+    cd webfuse-0.2.0
     mkdir .build
     cd .build
-    cmake -DWITHOUT_TESTS=ON -DWITHOUT_EXAMPLE=ON ..
+    cmake -DWITHOUT_TESTS=ON ..
     make
     sudo make install
