@@ -22,6 +22,7 @@ To install dependecies, see below.
   - [libwebsockets](https://libwebsockets.org/)
   - [jansson](https://github.com/akheron/jansson)
 - [openssl](https://www.openssl.org/)
+- [libconfig](https://hyperrealm.github.io/libconfig/)
 
 ### Installing dependencies
 
@@ -76,3 +77,8 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
     cmake -DWITHOUT_TESTS=ON ..
     make
     sudo make install
+
+#### libconfig
+
+    sudo apt update
+    sudo apt install libconfig-dev

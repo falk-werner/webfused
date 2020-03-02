@@ -24,6 +24,7 @@ addons:
             - python3-setuptools
             - python3-wheel
             - ninja-build
+            - libconfig-dev
 
 
 before_install:

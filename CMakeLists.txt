@@ -9,6 +9,7 @@ pkg_check_modules(FUSE3 REQUIRED fuse3)
 pkg_check_modules(LWS REQUIRED libwebsockets)
 pkg_check_modules(JANSSON REQUIRED jansson)
 pkg_check_modules(UUID REQUIRED uuid)
+pkg_check_modules(LIBCONFIG REQUIRED libconfig)
 pkg_check_modules(OPENSSL REQUIRED openssl)
 pkg_check_modules(WEBFUSE REQUIRED libwebfuse-adapter)
 
@@ -35,6 +36,7 @@ add_library(userdb STATIC
 )
 
 target_include_directories(userdb PUBLIC
+	${LIBCONFIG_INCLUDE_DIRS}
 	${OPENSSL_INCLUDE_DIRS}
 	${JANSSON_INCLUDE_DIRS}
 )
@@ -48,6 +50,7 @@ add_executable(webfused
 
 target_link_libraries(webfused PUBLIC 
     userdb
+	${LIBCONFIG_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
