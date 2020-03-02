@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/falk-werner/webfused.svg?branch=master)](https://travis-ci.org/falk-werner/webfused)
+[![codecov](https://codecov.io/gh/falk-werner/webfused/branch/config_file/graph/badge.svg)](https://codecov.io/gh/falk-werner/webfused)
 
 # webfused
 

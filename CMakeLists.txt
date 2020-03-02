@@ -33,6 +33,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(C_WARNINGS -Wall -Wextra)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(coverage)
+
 add_library(userdb STATIC 
 	src/userdb/userdb.c
 )
@@ -118,5 +121,29 @@ configure_file(etc/webfused.conf webfused.conf COPYONLY)
 
 enable_testing()
 gtest_discover_tests(alltests TEST_PREFIX alltests:)
+
+add_custom_target(check
+    ./alltests)
+add_dependencies(check alltests)
+
+add_custom_target(memcheck
+    valgrind ./alltests)
+add_dependencies(memcheck alltests)
+
+add_custom_target(coverage
+    mkdir -p coverage
+	COMMAND lcov --initial --capture --directory . --output-file coverage/lcov.info
+	COMMAND ./alltests
+	COMMAND lcov --capture --directory . --output-file coverage/lcov.info
+	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info
+#	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info
+)
+add_dependencies(coverage alltests)
+
+add_custom_target(coverage-report
+	COMMAND genhtml -branch-coverage --highlight --legend coverage/lcov.info --output-directory coverage/report
+)
+add_dependencies(coverage-report coverage)
+
 
 endif(NOT WITHOUT_TESTS)
