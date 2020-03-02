@@ -23,6 +23,7 @@ To install dependecies, see below.
   - [jansson](https://github.com/akheron/jansson)
 - [openssl](https://www.openssl.org/)
 - [libconfig](https://hyperrealm.github.io/libconfig/)
+- [Google Test](https://github.com/google/googletest) *(Test only)*
 
 ### Installing dependencies
 
@@ -82,3 +83,16 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
 
     sudo apt update
     sudo apt install libconfig-dev
+
+#### GoogleTest
+
+Installation of GoogleTest is optional webfuse library, but required to compile tests.
+
+    wget -O gtest-1.10.0.tar.gz https://github.com/google/googletest/archive/release-1.10.0.tar.gz
+    tar -xf gtest-1.10.0.tar.gz
+    cd googletest-release-1.10.0
+    mkdir .build
+    cd .build
+    cmake ..
+    make
+    sudo make install

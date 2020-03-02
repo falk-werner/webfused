@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.10)
 project(webfused VERSION 0.1.0 DESCRIPTION "Webfuse daemon")
 
+option(WITHOUT_TESTS   "disable unit tests"   OFF)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -78,3 +80,43 @@ target_include_directories(webfuse-passwd PUBLIC
 
 target_compile_options(webfuse-passwd PUBLIC ${OPENSSL_CFLAGS_OTHER})
 install(TARGETS webfuse-passwd DESTINATION bin)
+
+if(NOT WITHOUT_TESTS)
+
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+
+include (CTest)
+
+pkg_check_modules(GTEST gtest_main)
+include(GoogleTest)
+pkg_check_modules(GMOCK gmock)
+
+add_executable(alltests
+    test/test_config.cc
+)
+
+target_include_directories(alltests PRIVATE
+    src
+    ${GMOCK_INCLUDE_DIRS}
+    ${GTEST_INCLUDE_DIRS}
+)
+
+target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthread")
+
+target_link_libraries(alltests PRIVATE
+	${LIBCONFIG_LIBRARIES}
+	${GMOCK_LIBRARIES}
+	${GTEST_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
+)
+
+# copy test data
+configure_file(etc/webfused.conf webfused.conf COPYONLY)
+
+enable_testing()
+gtest_discover_tests(alltests TEST_PREFIX alltests:)
+
+endif(NOT WITHOUT_TESTS)
