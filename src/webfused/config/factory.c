@@ -1,6 +1,7 @@
 #include "webfused/config/factory.h"
 #include "webfused/config/config_intern.h"
 #include "webfused/config/config.h"
+#include "webfused/log/log.h"
 
 #include <libconfig.h>
 #include <stdlib.h>
@@ -23,13 +24,15 @@ wfd_config_check_version(
     int rc = config_lookup_int(config, "version.major", &version_major);
     if (CONFIG_TRUE != rc)
     {
-        // error: missing major version
+        WFD_ERROR("failed to load config: missing version.major");
         return false;
     }
 
     if (WFD_CONFIG_VERSION_MAJOR != version_major)
     {
-        // error: incompatible version, expected WFD_CONFIG_VERSION_MAJOR
+        WFD_ERROR("failed to load config: " 
+            "incompatible versions: expected %d, but war %d",
+            WFD_CONFIG_VERSION_MAJOR, version_major);
         return false;
     }
 
@@ -37,17 +40,17 @@ wfd_config_check_version(
     rc = config_lookup_int(config, "version.minor", &version_minor);
     if (CONFIG_TRUE != rc)
     {
-        // error: missing minor version
+        WFD_ERROR("failed to load config: missing version.minor");
         return false;
     }
 
     if (WFD_CONFIG_VERSION_MINOR < version_minor)
     {
-        // warn: some features might be disabled
+        WFD_WARN("newer config detected: some features might be disabled");
     }
     else if (WFD_CONFIG_VERSION_MINOR > version_minor)
     {
-        // info: use default values
+        WFD_INFO("old config detected: some features might use default values");
     }
 
     return true;
