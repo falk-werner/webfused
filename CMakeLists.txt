@@ -49,7 +49,10 @@ target_include_directories(userdb PUBLIC
 target_compile_options(userdb PUBLIC ${OPENSSL_CFLAGS_OTHER})
 
 add_library(webfused-static STATIC
-	src/webfused/daemon.c)
+	src/webfused/daemon.c
+	src/webfused/config/config.c
+	src/webfused/config/factory.c
+)
 
 add_executable(webfused
 	src/webfused/main.c
@@ -113,6 +116,7 @@ target_include_directories(alltests PRIVATE
 target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthread")
 
 target_link_libraries(alltests PRIVATE
+	webfused-static
 	${LIBCONFIG_LIBRARIES}
 	${GMOCK_LIBRARIES}
 	${GTEST_LIBRARIES}
