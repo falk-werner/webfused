@@ -1,3 +1,5 @@
+#include "webfused/daemon.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -154,7 +156,7 @@ static void on_interrupt(int signal_id)
 	shutdown_requested = true;
 }
 
-int main(int argc, char * argv[])
+int wfd_daemon_run(int argc, char * argv[])
 {
 	struct args args;
 	args.config = wf_server_config_create();

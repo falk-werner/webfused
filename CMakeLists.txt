@@ -48,12 +48,15 @@ target_include_directories(userdb PUBLIC
 
 target_compile_options(userdb PUBLIC ${OPENSSL_CFLAGS_OTHER})
 
+add_library(webfused-static STATIC
+	src/webfused/daemon.c)
 
 add_executable(webfused
-	src/daemon/main.c
+	src/webfused/main.c
 )
 
-target_link_libraries(webfused PUBLIC 
+target_link_libraries(webfused PUBLIC
+	webfused-static
     userdb
 	${LIBCONFIG_LIBRARIES}
     ${OPENSSL_LIBRARIES}
