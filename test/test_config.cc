@@ -31,6 +31,18 @@ TEST(config, minimal_config)
     wfd_config_dispose(config);
 }
 
+TEST(config, invalid_config)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    char const syntax_error[] = "version.major = 1\n";
+
+    struct wfd_config * config = wfd_config_load_string(syntax_error);
+    ASSERT_EQ(nullptr, config);    
+}
+
 TEST(config, invalid_major_version_too_low)
 {
     MockLogger logger;

@@ -84,8 +84,16 @@ wfd_config_load_file(
     if (CONFIG_TRUE == rc)
     {
         result = wfd_config_load(&config);
-        config_destroy(&config);
     }
+    else
+    {
+        WFD_ERROR("failed to load config: %s: %d: %s", 
+            config_error_file(&config),
+            config_error_line(&config),
+            config_error_text(&config));
+    }
+    config_destroy(&config);
+    
 
     return result;
 }
@@ -102,8 +110,15 @@ wfd_config_load_string(
     if (CONFIG_TRUE == rc)
     {
         result = wfd_config_load(&config);
-        config_destroy(&config);
     }
+    else
+    {
+        WFD_ERROR("failed to load config: %d: %s", 
+            config_error_line(&config),
+            config_error_text(&config));
+    }
+    config_destroy(&config);
+    
 
     return result;
 }
