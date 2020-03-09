@@ -2,6 +2,7 @@
 #define WFD_CONFIG_H
 
 #ifndef __cplusplus
+#include <stdbool.h>
 #include <stddef.h>
 #else
 #include <cstddef>
@@ -29,6 +30,10 @@ wfd_config_get_server_vhostname(
 
 extern char const *
 wfd_config_get_server_cert(
+    struct wfd_config * config);
+
+extern bool
+wfd_config_is_server_tls_enabled(
     struct wfd_config * config);
 
 extern char const *

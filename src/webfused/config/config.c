@@ -7,6 +7,15 @@
 #define WFD_CONFIG_DEFAULT_PORT         (8080)
 #define WFD_CONFIG_DEFAULT_VHOSTNAME    ("localhost")
 
+struct wfd_config
+{
+    char * vhost_name;
+    char * server_cert;
+    char * server_key;
+    char * server_doc_root;
+    int port;
+};
+
 extern struct wfd_config *
 wfd_config_create(void)
 {
@@ -28,7 +37,6 @@ void wfd_config_dispose(
     free(config->server_key);
     free(config->server_doc_root);
     free(config);
-
 }
 
 int
@@ -38,11 +46,36 @@ wfd_config_get_server_port(
     return config->port;
 }
 
+void
+wfd_config_set_server_port(
+    struct wfd_config * config,
+    int port)
+{
+    config->port = port;
+}
+
 char const *
 wfd_config_get_server_vhostname(
     struct wfd_config * config)
 {
     return config->vhost_name;
+}
+
+void
+wfd_config_set_server_vhostname(
+    struct wfd_config * config,
+    char const * vhost_name)
+{
+    free(config->vhost_name);
+    config->vhost_name = strdup(vhost_name);
+}
+
+bool
+wfd_config_is_server_tls_enabled(
+    struct wfd_config * config)
+{
+    return ((NULL != config->server_key) 
+        && (NULL != config->server_cert));
 }
 
 char const *
@@ -52,6 +85,15 @@ wfd_config_get_server_cert(
     return config->server_cert;
 }
 
+void
+wfd_config_set_server_cert(
+    struct wfd_config * config,
+    char const * cert)
+{
+    free(config->server_cert);
+    config->server_cert = strdup(cert);
+}
+
 char const *
 wfd_config_get_server_key(
     struct wfd_config * config)
@@ -59,11 +101,29 @@ wfd_config_get_server_key(
     return config->server_key;
 }
 
+void
+wfd_config_set_server_key(
+    struct wfd_config * config,
+    char const * key)
+{
+    free(config->server_key);
+    config->server_key = strdup(key);
+}
+
 char const *
 wfd_config_get_server_document_root(
     struct wfd_config * config)
 {
     return config->server_doc_root;
+}
+
+void
+wfd_config_set_server_document_root(
+    struct wfd_config * config,
+    char const * document_root)
+{
+    free(config->server_doc_root);
+    config->server_doc_root = strdup(document_root);
 }
 
 char const *

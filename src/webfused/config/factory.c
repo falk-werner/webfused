@@ -56,12 +56,57 @@ wfd_config_check_version(
     return true;
 }
 
+static bool
+wfd_config_read_server(
+    config_t * config,
+    struct wfd_config * result)
+{
+    char const * vhost_name;
+    int rc = config_lookup_string(config, "server.vhost_name", &vhost_name);
+    if (CONFIG_TRUE == rc)
+    {
+        wfd_config_set_server_vhostname(result, vhost_name);
+    }
+
+    int port;
+    rc = config_lookup_int(config, "server.port", &port);
+    if (CONFIG_TRUE == rc)
+    {
+        wfd_config_set_server_port(result, port);
+    }
+
+    char const * cert;
+    rc = config_lookup_string(config, "server.tls.certificate", &cert);
+    if (CONFIG_TRUE == rc)
+    {
+        wfd_config_set_server_cert(result, cert);
+    }
+
+    char const * key;
+    rc = config_lookup_string(config, "server.tls.key", &key);
+    if (CONFIG_TRUE == rc)
+    {
+        wfd_config_set_server_key(result, key);
+    }
+
+    char const * doc_root;
+    rc = config_lookup_string(config, "server.document_root", &doc_root);
+    if (CONFIG_TRUE == rc)
+    {
+        wfd_config_set_server_document_root(result, doc_root);
+    }
+
+    return true;
+}
+
 static struct wfd_config *
 wfd_config_load(config_t * config)
 {
     struct wfd_config * result = wfd_config_create();
 
-    bool success = wfd_config_check_version(config);
+    bool success = wfd_config_check_version(config)
+        && wfd_config_read_server(config, result)
+        ;
 
     if (!success)
     {
