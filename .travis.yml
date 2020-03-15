@@ -102,7 +102,8 @@ before_script:
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 
 script:
-    make $CHECK_TARGET
+    - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
+    - make $CHECK_TARGET
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)  
