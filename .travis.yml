@@ -102,6 +102,7 @@ before_script:
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
 
 script:
+    - find /usr -name libfuse3.so.3
     - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
     - make $CHECK_TARGET
 
