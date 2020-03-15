@@ -1,6 +1,8 @@
 #ifndef WFD_CONFIG_H
 #define WFD_CONFIG_H
 
+#include "webfused/config/builder.h"
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #include <stddef.h>
@@ -14,53 +16,22 @@ extern "C"
 #endif
 
 struct wfd_config;
-struct wfd_auth_settins;
-struct wfd_filesystem_info;
+struct wf_server_config;
 
-extern void wfd_config_dispose(
+extern struct wfd_config *
+wfd_config_create(void);
+
+extern void
+wfd_config_dispose(
     struct wfd_config * config);
 
-extern int
-wfd_config_get_server_port(
+extern struct wfd_config_builder
+wfd_config_get_builder(
     struct wfd_config * config);
 
-extern char const *
-wfd_config_get_server_vhostname(
+extern struct wf_server_config *
+wfd_config_get_server_config(
     struct wfd_config * config);
-
-extern char const *
-wfd_config_get_server_cert(
-    struct wfd_config * config);
-
-extern bool
-wfd_config_is_server_tls_enabled(
-    struct wfd_config * config);
-
-extern char const *
-wfd_config_get_server_key(
-    struct wfd_config * config);
-
-extern char const *
-wfd_config_get_server_document_root(
-    struct wfd_config * config);
-
-extern char const *
-wfd_config_get_auth_provider(
-    struct wfd_config * config);
-
-extern struct wfd_auth_settings *
-wfd_config_get_auth_settings(
-    struct wfd_config * config);
-
-extern size_t
-wfd_config_get_filesystem_count(
-    struct wfd_config * config);
-
-extern struct wfd_filesystem_info *
-wfd_confi_get_filesystem(
-    struct wfd_config * config,
-    size_t fs_index);
-
 
 #ifdef __cplusplus
 }

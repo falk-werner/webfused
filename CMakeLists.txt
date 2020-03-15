@@ -109,6 +109,7 @@ add_executable(alltests
 	test/mock_config_builder.cc
 	test/mock_logger.cc
     test/test_config_factory.cc
+	test/test_config.cc
 	test/test_log.cc
 )
 
@@ -123,6 +124,8 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	webfused-static
 	${LIBCONFIG_LIBRARIES}
+    ${WEBFUSE_LIBRARIES}
+    ${UUID_LIBRARIES}
 	${GMOCK_LIBRARIES}
 	${GTEST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
