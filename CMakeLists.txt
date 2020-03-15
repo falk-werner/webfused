@@ -108,7 +108,7 @@ pkg_check_modules(GMOCK gmock)
 add_executable(alltests
 	test/mock_config_builder.cc
 	test/mock_logger.cc
-    test/test_config.cc
+    test/test_config_factory.cc
 	test/test_log.cc
 )
 
