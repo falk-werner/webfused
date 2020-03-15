@@ -52,6 +52,7 @@ add_library(webfused-static STATIC
 	src/webfused/daemon.c
 	src/webfused/config/config.c
 	src/webfused/config/factory.c
+	src/webfused/config/builder.c
 	src/webfused/log/logger.c
 )
 
@@ -105,6 +106,7 @@ include(GoogleTest)
 pkg_check_modules(GMOCK gmock)
 
 add_executable(alltests
+	test/mock_config_builder.cc
 	test/mock_logger.cc
     test/test_config.cc
 	test/test_log.cc

@@ -1,21 +1,26 @@
 #include <gtest/gtest.h>
 
 #include "webfused/config/factory.h"
-#include "webfused/config/config.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
 #include "mock_logger.hpp"
+#include "mock_config_builder.hpp"
 
 
 using ::testing::_;
+using ::testing::StrictMock;
+using ::testing::StrEq;
 using ::webfused_test::MockLogger;
+using ::webfused_test::MockConfigBuilder;
 
 TEST(config, is_loadable)
 {
-    struct wfd_config * config = wfd_config_load_file("webfused.conf");
-    ASSERT_NE(nullptr, config);
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
+    EXPECT_CALL(builder, setServerPort(8080)).Times(1);
 
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_file(builder.getBuilder(), "webfused.conf");
+    ASSERT_TRUE(result);
 }
 
 TEST(config, minimal_config)
@@ -24,11 +29,11 @@ TEST(config, minimal_config)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
-    char const minimal[] = "version = { major = 1, minor = 0 }\n";
-    struct wfd_config * config = wfd_config_load_string(minimal);
-    ASSERT_NE(nullptr, config);
+    StrictMock<MockConfigBuilder> builder;
 
-    wfd_config_dispose(config);
+    char const minimal[] = "version = { major = 1, minor = 0 }\n";
+    bool result = wfd_config_load_string(builder.getBuilder(), minimal);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, invalid_config)
@@ -37,10 +42,12 @@ TEST(config, invalid_config)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const syntax_error[] = "version.major = 1\n";
 
-    struct wfd_config * config = wfd_config_load_string(syntax_error);
-    ASSERT_EQ(nullptr, config);    
+    bool result = wfd_config_load_string(builder.getBuilder(), syntax_error);
+    ASSERT_FALSE(result);    
 }
 
 TEST(config, invalid_major_version_too_low)
@@ -49,10 +56,12 @@ TEST(config, invalid_major_version_too_low)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const too_low[] = "version = { major = 0, minor = 0 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(too_low);
-    ASSERT_EQ(nullptr, config);    
+    bool result = wfd_config_load_string(builder.getBuilder(), too_low);
+    ASSERT_FALSE(result);
 }
 
 TEST(config, invalid_major_version_too_high)
@@ -61,10 +70,12 @@ TEST(config, invalid_major_version_too_high)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const too_high[] = "version = { major = 2, minor = 0 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(too_high);
-    ASSERT_EQ(nullptr, config);    
+    bool result = wfd_config_load_string(builder.getBuilder(), too_high);
+    ASSERT_FALSE(result);
 }
 
 TEST(config, invalid_missing_major_version)
@@ -73,10 +84,12 @@ TEST(config, invalid_missing_major_version)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const too_high[] = "version = { minor = 0 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(too_high);
-    ASSERT_EQ(nullptr, config);    
+    bool result = wfd_config_load_string(builder.getBuilder(), too_high);
+    ASSERT_FALSE(result);
 }
 
 TEST(config, invalid_missing_minor_version)
@@ -85,10 +98,12 @@ TEST(config, invalid_missing_minor_version)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const too_high[] = "version = { major = 1 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(too_high);
-    ASSERT_EQ(nullptr, config);    
+    bool result = wfd_config_load_string(builder.getBuilder(), too_high);
+    ASSERT_FALSE(result);
 }
 
 TEST(config, valid_older_minor)
@@ -97,12 +112,12 @@ TEST(config, valid_older_minor)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_INFO, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
     
+    StrictMock<MockConfigBuilder> builder;    
+
     char const valid[] = "version = { major = 1, minor = -1 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(valid);
-    ASSERT_NE(nullptr, config);
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), valid);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, valid_newer_minor)
@@ -111,31 +126,12 @@ TEST(config, valid_newer_minor)
     EXPECT_CALL(logger, log(WFD_LOGLEVEL_WARN, _, _)).Times(1);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+
     char const valid[] = "version = { major = 1, minor = 1 }\n";
 
-    struct wfd_config * config = wfd_config_load_string(valid);
-    ASSERT_NE(nullptr, config);
-
-    wfd_config_dispose(config);
-}
-
-TEST(config, default_values)
-{
-    MockLogger logger;
-    EXPECT_CALL(logger, log(_, _, _)).Times(0);
-    EXPECT_CALL(logger, onclose()).Times(1);
-
-    char const minimal[] = "version = { major = 1, minor = 0 }\n";
-    struct wfd_config * config = wfd_config_load_string(minimal);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_EQ(8080, wfd_config_get_server_port(config));
-    ASSERT_STREQ("localhost", wfd_config_get_server_vhostname(config));
-    ASSERT_EQ(nullptr, wfd_config_get_server_cert(config));
-    ASSERT_EQ(nullptr, wfd_config_get_server_key(config));
-    ASSERT_EQ(nullptr, wfd_config_get_server_document_root(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), valid);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, vhost_name)
@@ -144,6 +140,9 @@ TEST(config, vhost_name)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setServerVhostname(StrEq("some.host"))).Times(1);
+
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "server:\n"
@@ -151,12 +150,8 @@ TEST(config, vhost_name)
         "  vhost_name = \"some.host\"\n"
         "}\n"
         ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_STREQ("some.host", wfd_config_get_server_vhostname(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, port)
@@ -165,6 +160,9 @@ TEST(config, port)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setServerPort(54321)).Times(1);
+
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "server:\n"
@@ -172,39 +170,8 @@ TEST(config, port)
         "  port = 54321\n"
         "}\n"
         ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_EQ(54321, wfd_config_get_server_port(config));
-
-    wfd_config_dispose(config);
-}
-
-TEST(config, tls)
-{
-    MockLogger logger;
-    EXPECT_CALL(logger, log(_, _, _)).Times(0);
-    EXPECT_CALL(logger, onclose()).Times(1);
-
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
-        "server:\n"
-        "{\n"
-        "  tls:\n"
-        "  {\n"
-        "    certificate = \"/path/to/cert.pem\"\n"
-        "    key = \"/path/to/key.pem\"\n"
-        "  }\n"
-        "}\n"
-        ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_TRUE(wfd_config_is_server_tls_enabled(config));
-    ASSERT_STREQ("/path/to/cert.pem", wfd_config_get_server_cert(config));
-    ASSERT_STREQ("/path/to/key.pem", wfd_config_get_server_key(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, tls_certificate)
@@ -213,6 +180,9 @@ TEST(config, tls_certificate)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;    
+    EXPECT_CALL(builder, setServerCert(StrEq("/path/to/cert.pem"))).Times(1);
+
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "server:\n"
@@ -223,14 +193,8 @@ TEST(config, tls_certificate)
         "  }\n"
         "}\n"
         ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_FALSE(wfd_config_is_server_tls_enabled(config));
-    ASSERT_STREQ("/path/to/cert.pem", wfd_config_get_server_cert(config));
-    ASSERT_EQ(nullptr, wfd_config_get_server_key(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, tls_key)
@@ -238,6 +202,9 @@ TEST(config, tls_key)
     MockLogger logger;
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;    
+    EXPECT_CALL(builder, setServerKey(StrEq("/path/to/key.pem"))).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -249,14 +216,8 @@ TEST(config, tls_key)
         "  }\n"
         "}\n"
         ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_FALSE(wfd_config_is_server_tls_enabled(config));
-    ASSERT_EQ(nullptr, wfd_config_get_server_cert(config));
-    ASSERT_STREQ("/path/to/key.pem", wfd_config_get_server_key(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
 }
 
 TEST(config, document_root)
@@ -265,6 +226,9 @@ TEST(config, document_root)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setServerDocumentRoot(StrEq("/var/www"))).Times(1);    
+
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "server:\n"
@@ -272,10 +236,6 @@ TEST(config, document_root)
         "  document_root = \"/var/www\"\n"
         "}\n"
         ;
-    struct wfd_config * config = wfd_config_load_string(config_text);
-    ASSERT_NE(nullptr, config);
-
-    ASSERT_STREQ("/var/www", wfd_config_get_server_document_root(config));
-
-    wfd_config_dispose(config);
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
 }
