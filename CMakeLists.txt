@@ -53,6 +53,10 @@ add_library(webfused-static STATIC
 	src/webfused/config/config.c
 	src/webfused/config/factory.c
 	src/webfused/config/builder.c
+	src/webfused/config/auth_settings.c
+	src/webfused/auth/authenticator.c
+	src/webfused/auth/factory.c
+	src/webfused/auth/file_authenticator.c
 	src/webfused/log/logger.c
 )
 
@@ -110,6 +114,8 @@ add_executable(alltests
 	test/mock_logger.cc
     test/test_config_factory.cc
 	test/test_config.cc
+	test/test_auth_settings.cc
+	test/test_auth_factory.cc
 	test/test_log.cc
 )
 
@@ -133,6 +139,7 @@ target_link_libraries(alltests PRIVATE
 
 # copy test data
 configure_file(etc/webfused.conf webfused.conf COPYONLY)
+configure_file(test/invalid.conf invalid.conf COPYONLY)
 
 enable_testing()
 gtest_discover_tests(alltests TEST_PREFIX alltests:)
@@ -151,7 +158,7 @@ add_custom_target(coverage
 	COMMAND ./alltests
 	COMMAND lcov --capture --directory . --output-file coverage/lcov.info
 	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info
-#	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info
+	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info
 )
 add_dependencies(coverage alltests)
 

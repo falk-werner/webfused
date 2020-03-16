@@ -8,6 +8,7 @@
 
 
 using ::testing::_;
+using ::testing::Return;
 using ::testing::StrictMock;
 using ::testing::StrEq;
 using ::webfused_test::MockLogger;
@@ -18,6 +19,7 @@ TEST(config, is_loadable)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
     EXPECT_CALL(builder, setServerPort(8080)).Times(1);
+    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(true));
 
     bool result = wfd_config_load_file(builder.getBuilder(), "webfused.conf");
     ASSERT_TRUE(result);
@@ -47,6 +49,18 @@ TEST(config, invalid_config)
     char const syntax_error[] = "version.major = 1\n";
 
     bool result = wfd_config_load_string(builder.getBuilder(), syntax_error);
+    ASSERT_FALSE(result);    
+}
+
+TEST(config, invalid_config_file)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;    
+
+    bool result = wfd_config_load_file(builder.getBuilder(), "invalid.conf");
     ASSERT_FALSE(result);    
 }
 
@@ -238,4 +252,84 @@ TEST(config, document_root)
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_TRUE(result);
+}
+
+TEST(config, authentication)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(true));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "authentication:\n"
+        "{\n"
+        "  provider = \"test\"\n"
+        "  settings: { }\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
+}
+
+TEST(config, failed_create_authenticator)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(false));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "authentication:\n"
+        "{\n"
+        "  provider = \"test\"\n"
+        "  settings: { }\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, failed_missing_auth_provider)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "authentication:\n"
+        "{\n"
+        "  settings: { }\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, failed_missing_auth_settings)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "authentication:\n"
+        "{\n"
+        "  provider = \"test\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
 }

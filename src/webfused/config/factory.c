@@ -1,4 +1,5 @@
 #include "webfused/config/factory.h"
+#include "webfused/config/auth_settings.h"
 #include "webfused/log/log.h"
 
 #include <libconfig.h>
@@ -98,6 +99,51 @@ wfd_config_read_server(
 }
 
 static bool
+wfd_config_read_authentication(
+    config_t * config,
+    struct wfd_config_builder builder)
+{
+    bool result = true;
+
+    bool hasAuthentication = (NULL != config_lookup(config, "authentication"));
+    if (hasAuthentication)
+    {
+        char const * provider_name = NULL;
+        {
+            int rc = config_lookup_string(config, "authentication.provider", &provider_name);
+            if (CONFIG_TRUE != rc)
+            {
+                WFD_ERROR("missing authentication provider");
+                result = false;
+            }
+        }
+
+        struct config_setting_t * settings = NULL;
+        if (result)
+        {
+            settings = config_lookup(config, "authentication.settings");
+            if (NULL == settings)
+            {
+                WFD_ERROR("missing authentication settings");
+                result = false;
+            }
+        }
+
+        if (result)
+        {
+            struct wfd_auth_settings * auth_settings = wfd_auth_settings_create(
+                provider_name, settings);
+
+            result = wfd_config_builder_add_auth_provider(builder, auth_settings);
+            wfd_auth_settings_dispose(auth_settings);
+        }
+
+    }
+    
+    return result;
+}
+
+static bool
 wfd_config_load(
     struct wfd_config_builder builder,
     config_t * config)
@@ -105,6 +151,7 @@ wfd_config_load(
 
     bool result = wfd_config_check_version(config)
         && wfd_config_read_server(config, builder)
+        && wfd_config_read_authentication(config, builder)
         ;
 
     return result;

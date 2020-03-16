@@ -5,7 +5,7 @@ extern "C"
 using webfused_test::IConfigBuilder;
 
 static void
-wfd_MockConifigBuilder_set_server_vhostname(
+wfd_MockConfigBuilder_set_server_vhostname(
     void * data,
     char const * vhost_name)
 {
@@ -14,7 +14,7 @@ wfd_MockConifigBuilder_set_server_vhostname(
 }
 
 static void
-wfd_MockConifigBuilder_set_server_port(
+wfd_MockConfigBuilder_set_server_port(
     void * data,
     int port)
 {
@@ -23,7 +23,7 @@ wfd_MockConifigBuilder_set_server_port(
 }
 
 static void
-wfd_MockConifigBuilder_set_server_key(
+wfd_MockConfigBuilder_set_server_key(
     void * data,
     char const * key_path)
 {
@@ -32,7 +32,7 @@ wfd_MockConifigBuilder_set_server_key(
 }
 
 static void
-wfd_MockConifigBuilder_set_server_cert(
+wfd_MockConfigBuilder_set_server_cert(
     void * data,
     char const * cert_path)
 {
@@ -41,7 +41,7 @@ wfd_MockConifigBuilder_set_server_cert(
 }
 
 static void
-wfd_MockConifigBuilder_set_server_document_root(
+wfd_MockConfigBuilder_set_server_document_root(
     void * data,
     char const * document_root)
 {
@@ -49,13 +49,24 @@ wfd_MockConifigBuilder_set_server_document_root(
     builder->setServerDocumentRoot(document_root);
 }
 
+static bool
+wfd_MockConfigBuilder_add_auth_provider(
+    void * data,
+    struct wfd_auth_settings * settings)
+{
+    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
+    builder->addAuthProvider(settings);
+}
+
+
 static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
 {
-    &wfd_MockConifigBuilder_set_server_vhostname,
-    &wfd_MockConifigBuilder_set_server_port,
-    &wfd_MockConifigBuilder_set_server_key,
-    &wfd_MockConifigBuilder_set_server_cert,
-    &wfd_MockConifigBuilder_set_server_document_root
+    &wfd_MockConfigBuilder_set_server_vhostname,
+    &wfd_MockConfigBuilder_set_server_port,
+    &wfd_MockConfigBuilder_set_server_key,
+    &wfd_MockConfigBuilder_set_server_cert,
+    &wfd_MockConfigBuilder_set_server_document_root,
+    &wfd_MockConfigBuilder_add_auth_provider
 };
 
 }

@@ -1,10 +1,16 @@
 #ifndef WFD_CONFIG_BUILDER_H
 #define WFD_CONFIG_BUILDER_H
 
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+struct wfd_auth_settings;
 
 typedef void
 wfd_config_builder_set_server_vhostname_fn(
@@ -31,6 +37,11 @@ wfd_config_builder_set_server_document_root_fn(
     void * data,
     char const * document_root);
 
+typedef bool
+wfd_config_builder_add_auth_provider_fn(
+    void * data,
+    struct wfd_auth_settings * settings);
+
 struct wfd_config_builder_vtable
 {
     wfd_config_builder_set_server_vhostname_fn * set_server_vhostname;
@@ -38,6 +49,7 @@ struct wfd_config_builder_vtable
     wfd_config_builder_set_server_key_fn * set_server_key;
     wfd_config_builder_set_server_cert_fn * set_server_cert;
     wfd_config_builder_set_server_document_root_fn * set_server_document_root;
+    wfd_config_builder_add_auth_provider_fn * add_auth_provider;
 };
 
 struct wfd_config_builder
@@ -70,6 +82,11 @@ extern void
 wfd_config_builder_set_server_document_root(
     struct wfd_config_builder builder,
     char const * document_root);
+
+extern bool
+wfd_config_builder_add_auth_provider(
+    struct wfd_config_builder builder,
+    struct wfd_auth_settings * settings);
 
 
 #ifdef __cplusplus
