@@ -48,11 +48,20 @@ wfd_file_authenticator_authenticate(
     return result;
 }
 
+static char const *
+wfd_file_authenticator_get_type(
+    void * data)
+{
+    (void) data;
+    return "username";  
+}
+
 static struct wfd_authenticator_vtable
 wfd_file_authenticator_vtable =
 {
     .dispose = &wfd_file_authenticator_dispose,
-    .authenticate = &wfd_file_authenticator_authenticate
+    .authenticate = &wfd_file_authenticator_authenticate,
+    .get_type = &wfd_file_authenticator_get_type
 };
 
 bool

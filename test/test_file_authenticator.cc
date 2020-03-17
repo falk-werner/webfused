@@ -4,86 +4,59 @@
 #include "webfused/auth/factory.h"
 
 #include "mock_credentials.hpp"
+#include "mock_auth_settings.hpp"
 
 #include <gtest/gtest.h>
 #include <libconfig.h>
 
+using ::webfused_test::MockAuthSettings;
 using ::webfused_test::MockCredentials;
 using ::testing::Return;
 using ::testing::StrEq;
 
 TEST(file_authenticator, create)
 {
-    char const config_text[] =
-        "file = \"/tmp/webfuse_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_file_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_file_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, create_fail_missing_file)
 {
-    config_t config;
-    config_init(&config);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return(nullptr));
 
     wfd_authenticator authenticator;
-    bool success = wfd_file_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_file_authenticator_create(nullptr, &authenticator);
     ASSERT_FALSE(success);
-
-    wfd_auth_settings_dispose(auth_settings);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, create_via_factory)
 {
-    char const config_text[] =
-        "file = \"/tmp/webfuse_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, authenticate)
 {
-    char const config_text[] =
-        "file = \"test_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
     MockCredentials creds;
@@ -93,25 +66,17 @@ TEST(file_authenticator, authenticate)
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_TRUE(is_authenticated);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, authenticate_fail_wrong_passwd)
 {
-    char const config_text[] =
-        "file = \"test_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
     MockCredentials creds;
@@ -121,25 +86,17 @@ TEST(file_authenticator, authenticate_fail_wrong_passwd)
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, authenticate_fail_no_passwd_file)
 {
-    char const config_text[] =
-        "file = \"non_existing_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("unknown_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
     MockCredentials creds;
@@ -149,25 +106,17 @@ TEST(file_authenticator, authenticate_fail_no_passwd_file)
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, authenticate_fail_missing_username)
 {
-    char const config_text[] =
-        "file = \"test_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
     MockCredentials creds;
@@ -177,25 +126,17 @@ TEST(file_authenticator, authenticate_fail_missing_username)
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
 }
 
 TEST(file_authenticator, authenticate_fail_missing_password)
 {
-    char const config_text[] =
-        "file = \"test_passwd.json\"\n"
-        ;
-    config_t config;
-    config_init(&config);
-    config_read_string(&config, config_text);
-    config_setting_t * settings = config_root_setting(&config);
-
-    wfd_auth_settings * auth_settings = wfd_auth_settings_create("file", settings);
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
-    bool success = wfd_authenticator_create(auth_settings, &authenticator);
+    bool success = wfd_authenticator_create(nullptr, &authenticator);
     ASSERT_TRUE(success);
 
     MockCredentials creds;
@@ -205,7 +146,19 @@ TEST(file_authenticator, authenticate_fail_missing_password)
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
 
-    wfd_auth_settings_dispose(auth_settings);
     wfd_authenticator_dispose(authenticator);
-    config_destroy(&config);
+}
+
+TEST(file_authenticator, get_type)
+{
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+
+    wfd_authenticator authenticator;
+    bool success = wfd_file_authenticator_create(nullptr, &authenticator);
+    ASSERT_TRUE(success);
+
+    ASSERT_STREQ("username", wfd_authenticator_get_type(authenticator));
+
+    wfd_authenticator_dispose(authenticator);
 }

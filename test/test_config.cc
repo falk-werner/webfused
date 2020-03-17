@@ -1,5 +1,10 @@
 #include <gtest/gtest.h>
 #include "webfused/config/config.h"
+#include "mock_auth_settings.hpp"
+
+using ::webfused_test::MockAuthSettings;
+using ::testing::Return;
+using ::testing::StrEq;
 
 TEST(config, server_config)
 {
@@ -15,6 +20,59 @@ TEST(config, server_config)
 
     wf_server_config * server_config = wfd_config_get_server_config(config);
     ASSERT_NE(nullptr, server_config);
+
+    wfd_config_dispose(config);
+}
+
+TEST(config, auth_config)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+
+    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    ASSERT_TRUE(success);
+
+    wfd_config_dispose(config);
+}
+
+TEST(config, auth_config_failed_to_add_second_provider)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+
+    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    ASSERT_TRUE(success);
+
+    success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    ASSERT_FALSE(success);
+
+    wfd_config_dispose(config);
+}
+
+TEST(config, auth_config_failed_to_add_unknown_provider)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    MockAuthSettings settings;
+    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("unknown"));
+
+    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    ASSERT_FALSE(success);
 
     wfd_config_dispose(config);
 }

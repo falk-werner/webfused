@@ -16,3 +16,9 @@ wfd_authenticator_authenticate(
         credentials, authenticator.data);
 }
 
+char const *
+wfd_authenticator_get_type(
+    struct wfd_authenticator authenticator)
+{
+    return authenticator.vtable->get_type(authenticator.data);
+}

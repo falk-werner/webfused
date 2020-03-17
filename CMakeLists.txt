@@ -113,6 +113,7 @@ add_executable(alltests
 	test/mock_config_builder.cc
 	test/mock_logger.cc
 	test/mock_credentials.cc
+	test/mock_auth_settings.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_auth_settings.cc
@@ -132,6 +133,8 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
+	-Wl,--wrap=wfd_auth_settings_get_provider
+	-Wl,--wrap=wfd_auth_settings_get
 	webfused-static
 	userdb
 	${LIBCONFIG_LIBRARIES}
