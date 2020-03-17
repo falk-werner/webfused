@@ -4,6 +4,7 @@
 
 #include "webfuse/adapter/credentials.h"
 #include "userdb/userdb.h"
+#include "webfused/log/log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -44,6 +45,10 @@ wfd_file_authenticator_authenticate(
 
 		userdb_dispose(db);
 	}
+
+    WFD_INFO("authenticate user \'%s\': %s", 
+        (NULL != username) ? username : "<unknown>",
+        result ? "success" : "failure");
 
     return result;
 }

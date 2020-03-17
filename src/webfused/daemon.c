@@ -11,14 +11,17 @@
 #include <getopt.h>
 
 #include <webfuse_adapter.h>
-#include <userdb/userdb.h>
+#include "webfused/config/config.h"
+#include "webfused/config/factory.h"
+#include "webfused/log/stderr_logger.h"
+#include "webfused/log/log.h"
 
-#define SERVICE_TIMEOUT (1 * 1000)
+#define WFD_SERVICE_TIMEOUT (1 * 1000)
+#define WFD_DEFAULT_CONFIG_FILE ("/etc/webfuse.conf")
 
 struct args
 {
-	struct wf_server_config * config;
-	char * passwd_path;
+	char * config_file;
 	bool show_help;
 };
 
@@ -27,67 +30,35 @@ static bool shutdown_requested = false;
 static void show_help(void)
 {
 	printf(
-		"webfused, Copyright (c) 2019, webfused authors <https://github.com/falk-werner/webfused>\n"
+		"webfused, Copyright (c) 2019-2020, webfused authors <https://github.com/falk-werner/webfused>\n"
 		"Websocket file system daemon\n"
 		"\n"
-		"Usage: webfused [m <mount_point>] [-d <document_root] [-n <vhost_name>] [-p <port>]\n"
-		"            [-c <server_cert_path>] [-k <server_key_path>] [-P <passwd_path>]\n"
+		"Usage: webfused [-f <config file>] | -h\n"
 		"\n"
 		"Options:\n"
-		"\t-m, --mount_point      Path of mount point (required)\n"
-		"\t-d, --document_root    Path of www directory (default: not set, www disabled)\n"
-		"\t-c, --server_cert_path Path of servers own certificate (default: not set, TLS disabled)\n"
-		"\t-k, --server_key_path  Path of servers private key (default: not set, TLS disabled)\n"
-		"\t-n, --vhost_name       Name of virtual host (default: \"localhost\")\n"
-		"\t-p, --port             Number of servers port (default: 8080)\n"
-		"\t-P, --passwd_path      Path to password file (default: not set, authentication disabled)\n"
+		"\t-f, --config-file Path to config file (default: /etc/webfuse.conf)\n"
+		"\t-h, --help        Print this message and terminate\n"
 		"\n");
-}
-
-static bool authenticate(struct wf_credentials * creds, void * user_data)
-{
-	bool result = false;
-	struct args * args = user_data;
-
-	char const * username = wf_credentials_get(creds, "username");
-	char const * password = wf_credentials_get(creds, "password");
-	if ((NULL != username) && (NULL != password))
-	{
-		struct userdb * db = userdb_create("");
-		result = userdb_load(db, args->passwd_path); 
-		if (result)
-		{
-			result = userdb_check(db, username, password);
-		}
-
-		userdb_dispose(db);
-	}
-
-	return result;
 }
 
 static int parse_arguments(int argc, char * argv[], struct args * args)
 {
 	static struct option const options[] =
 	{
-		{"mount_point", required_argument, NULL, 'm'},
-		{"document_root", required_argument, NULL, 'd'},
-		{"server_cert_path", required_argument, NULL, 'c'},
-		{"server_key_path", required_argument, NULL, 'k'},
-		{"vhost_name", required_argument, NULL, 'n'},
-		{"port", required_argument, NULL, 'p'},
-		{"passwd_path", required_argument, NULL, 'P'},
+		{"config-file", required_argument, NULL, 'f'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
 
+	args->config_file = strdup(WFD_DEFAULT_CONFIG_FILE);
+	args->show_help = false;
+
 	bool result = EXIT_SUCCESS;
 	bool finished = false;
-	bool has_mountpoint = false;
 	while ((!finished) && (EXIT_SUCCESS == result))
 	{
 		int option_index = 0;
-		int const c = getopt_long(argc, argv, "m:d:c:k:n:p:P:h", options, &option_index);
+		int const c = getopt_long(argc, argv, "f:h", options, &option_index);
 
 		switch (c)
 		{
@@ -98,46 +69,14 @@ static int parse_arguments(int argc, char * argv[], struct args * args)
 				args->show_help = true;
 				finished = true;
 				break;
-			case 'm':
-				wf_server_config_set_mountpoint(args->config, optarg);
-				has_mountpoint = true;
-				break;
-			case 'd':
-				wf_server_config_set_documentroot(args->config, optarg);
-				break;
-			case 'c':
-				wf_server_config_set_certpath(args->config, optarg);
-				break;
-			case 'k':
-				wf_server_config_set_keypath(args->config, optarg);
-				break;
-			case 'n':
-				wf_server_config_set_vhostname(args->config, optarg);
-				break;
-			case 'p':
-				wf_server_config_set_port(args->config, atoi(optarg));
-				break;
-			case 'P':
-				free(args->passwd_path);
-				args->passwd_path = strdup(optarg);
-				wf_server_config_add_authenticator(args->config, 
-					"username",
-					&authenticate,
-					args);
+			case 'f':
+				free(args->config_file);
+				args->config_file = strdup(optarg);
 				break;
 			default:
 				fprintf(stderr, "error: unknown argument\n");
 				result = EXIT_FAILURE;
 				break;
-		}
-	}
-
-	if ((EXIT_SUCCESS == result) && (!args->show_help))
-	{
-		if (!has_mountpoint)
-		{
-			fprintf(stderr, "error: missing mount point\n");
-			result = EXIT_FAILURE;
 		}
 	}
 
@@ -158,41 +97,51 @@ static void on_interrupt(int signal_id)
 
 int wfd_daemon_run(int argc, char * argv[])
 {
-	struct args args;
-	args.config = wf_server_config_create();
-	wf_server_config_set_vhostname(args.config, "localhost");
-	wf_server_config_set_port(args.config, 8080);
-	args.passwd_path = NULL;
-	args.show_help = false;
+	wfd_stderr_logger_init(WFD_LOGLEVEL_ALL);
 
+	struct args args;
 	int result = parse_arguments(argc, argv, &args);
 	
 	if (!args.show_help)
 	{
 		signal(SIGINT, on_interrupt);
-		struct wf_server * server = wf_server_create(args.config);
-		if (NULL != server)
-		{
-			while (!shutdown_requested)
-			{
-				wf_server_service(server, SERVICE_TIMEOUT);
-			}
 
-			wf_server_dispose(server);			
+		struct wfd_config * config = wfd_config_create();
+		struct wfd_config_builder builder = wfd_config_get_builder(config);
+		bool success = wfd_config_load_file(builder, args.config_file);
+		if (success)
+		{
+			struct wf_server_config * server_config = wfd_config_get_server_config(config);
+			struct wf_server * server = wf_server_create(server_config);
+			if (NULL != server)
+			{
+				while (!shutdown_requested)
+				{
+					wf_server_service(server, WFD_SERVICE_TIMEOUT);
+				}
+
+				wf_server_dispose(server);			
+			}
+			else
+			{
+				fprintf(stderr, "fatal: unable start server\n");
+				result = EXIT_FAILURE;
+			}
 		}
 		else
 		{
-			fprintf(stderr, "fatal: unable start server\n");
+			fprintf(stderr, "fatal: failed to load server config\n");
 			result = EXIT_FAILURE;
- 		}
+		}
+
+		 wfd_config_dispose(config);
 	}
 	else
 	{
 		show_help();
 	}
 
-	free(args.passwd_path);
-	wf_server_config_dispose(args.config);
+	free(args.config_file);
 	return result;
 }
 
