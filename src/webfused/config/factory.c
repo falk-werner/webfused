@@ -144,6 +144,55 @@ wfd_config_read_authentication(
 }
 
 static bool
+wfd_config_read_filesystems(
+    config_t * config,
+    struct wfd_config_builder builder)
+{
+    bool result = true;
+    config_setting_t * filesystems = config_lookup(config, "filesystems");
+    if (NULL != filesystems)
+    {
+        int length = config_setting_length(filesystems);
+        for (int i = 0; i < length; i++)
+        {
+            config_setting_t * fs = config_setting_get_elem(filesystems, i);
+            if (NULL == fs)
+            {
+                WFD_ERROR("failed to load config: invalid filesystem section");
+                result = false;
+                break;
+            }
+
+            char const * name;
+            int rc = config_setting_lookup_string(fs, "name", &name);
+            if (rc != CONFIG_TRUE)
+            {
+                WFD_ERROR("failed to load config: missing required filesystem property \'name\'");
+                result = false;
+                break;
+            }
+
+            char const * mount_point;
+            rc = config_setting_lookup_string(fs, "mount_point", &mount_point);
+            if (rc != CONFIG_TRUE)
+            {
+                WFD_ERROR("failed to load config: missing required filesystem property \'mount_point\'");
+                result = false;
+                break;
+            }
+
+            result = wfd_config_builder_add_filesystem(builder, name, mount_point);
+            if (!result)
+            {
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+static bool
 wfd_config_load(
     struct wfd_config_builder builder,
     config_t * config)
@@ -152,6 +201,7 @@ wfd_config_load(
     bool result = wfd_config_check_version(config)
         && wfd_config_read_server(config, builder)
         && wfd_config_read_authentication(config, builder)
+        && wfd_config_read_filesystems(config, builder)
         ;
 
     return result;

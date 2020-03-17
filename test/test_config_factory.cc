@@ -20,6 +20,7 @@ TEST(config, is_loadable)
     EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
     EXPECT_CALL(builder, setServerPort(8080)).Times(1);
     EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(builder, addFilesystem(_,_)).Times(1).WillOnce(Return(true));
 
     bool result = wfd_config_load_file(builder.getBuilder(), "webfused.conf");
     ASSERT_TRUE(result);
@@ -329,6 +330,105 @@ TEST(config, failed_missing_auth_settings)
         "{\n"
         "  provider = \"test\"\n"
         "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, filesystems)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(1).WillOnce(Return(true));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
+        ")\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
+}
+
+TEST(config, filesystems_empty)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        ")\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
+}
+
+TEST(config, filesystems_failed_add)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(1).WillOnce(Return(false));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
+        ")\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, filesystems_failed_missing_name)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {mount_point = \"/tmp/test\" }\n"
+        ")\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, filesystems_failed_missing_mountpoint)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {name = \"foo\"}\n"
+        ")\n"
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_FALSE(result);

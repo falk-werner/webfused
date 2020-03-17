@@ -42,6 +42,12 @@ wfd_config_builder_add_auth_provider_fn(
     void * data,
     struct wfd_auth_settings * settings);
 
+typedef bool
+wfd_config_builder_add_filesystem_fn(
+    void * data,
+    char const * name,
+    char const * mount_point);
+
 struct wfd_config_builder_vtable
 {
     wfd_config_builder_set_server_vhostname_fn * set_server_vhostname;
@@ -50,6 +56,7 @@ struct wfd_config_builder_vtable
     wfd_config_builder_set_server_cert_fn * set_server_cert;
     wfd_config_builder_set_server_document_root_fn * set_server_document_root;
     wfd_config_builder_add_auth_provider_fn * add_auth_provider;
+    wfd_config_builder_add_filesystem_fn * add_filesystem;
 };
 
 struct wfd_config_builder
@@ -88,6 +95,11 @@ wfd_config_builder_add_auth_provider(
     struct wfd_config_builder builder,
     struct wfd_auth_settings * settings);
 
+extern bool
+wfd_config_builder_add_filesystem(
+    struct wfd_config_builder builder,
+    char const * name,
+    char const * mount_point);
 
 #ifdef __cplusplus
 }

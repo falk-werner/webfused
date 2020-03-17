@@ -2,6 +2,12 @@
 #include "webfused/config/config.h"
 #include "mock_auth_settings.hpp"
 
+#include "webfused/log/logger.h"
+#include "webfused/log/log.h"
+#include "mock_logger.hpp"
+using ::webfused_test::MockLogger;
+using ::testing::_;
+
 using ::webfused_test::MockAuthSettings;
 using ::testing::Return;
 using ::testing::StrEq;
@@ -73,6 +79,19 @@ TEST(config, auth_config_failed_to_add_unknown_provider)
 
     bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
     ASSERT_FALSE(success);
+
+    wfd_config_dispose(config);
+}
+
+TEST(config, add_filesystem)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    bool success = wfd_config_builder_add_filesystem(builder, "test", "/tmp/test");
+    ASSERT_TRUE(success);
 
     wfd_config_dispose(config);
 }

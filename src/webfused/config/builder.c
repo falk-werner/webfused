@@ -48,4 +48,13 @@ wfd_config_builder_add_auth_provider(
     return builder.vtable->add_auth_provider(builder.data, settings);
 }
 
+bool
+wfd_config_builder_add_filesystem(
+    struct wfd_config_builder builder,
+    char const * name,
+    char const * mount_point)
+{
+    return builder.vtable->add_filesystem(builder.data, name, mount_point);
+}
+
 

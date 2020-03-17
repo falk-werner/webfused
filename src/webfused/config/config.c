@@ -2,6 +2,7 @@
 #include "webfuse/adapter/server_config.h"
 #include "webfused/auth/factory.h"
 #include "webfused/auth/authenticator.h"
+#include "webfused/mountpoint_factory.h"
 
 #include <stdlib.h>
 
@@ -13,6 +14,7 @@ struct wfd_config
     struct wf_server_config * server;
     bool has_authenticator;
     struct wfd_authenticator authenticator;
+    struct wfd_mountpoint_factory * mountpoint_factory;
 };
 
 static void
@@ -86,6 +88,16 @@ wfd_config_add_auth_provider(
     return result;
 }
 
+static bool
+wfd_config_add_filesystem(
+    void * data,
+    char const * name,
+    char const * mount_point)
+{
+    struct wfd_config * config = data;
+    return wfd_mountpoint_factory_add_filesystem(
+        config->mountpoint_factory, name, mount_point);
+}
 
 static const struct wfd_config_builder_vtable 
 wfd_config_vtable_config_builder =
@@ -95,7 +107,8 @@ wfd_config_vtable_config_builder =
     .set_server_key = &wfd_config_set_server_key,
     .set_server_cert = &wfd_config_set_server_cert,
     .set_server_document_root = &wfd_config_set_server_document_root,
-    .add_auth_provider = &wfd_config_add_auth_provider
+    .add_auth_provider = &wfd_config_add_auth_provider,
+    .add_filesystem = &wfd_config_add_filesystem
 };
 
 struct wfd_config *
@@ -103,11 +116,14 @@ wfd_config_create(void)
 {
     struct wfd_config * config = malloc(sizeof(struct wfd_config));
 
+    config->mountpoint_factory = wfd_mountpoint_factory_create();
+    config->has_authenticator = false;
     config->server = wf_server_config_create();
     wf_server_config_set_vhostname(config->server, WFD_CONFIG_DEFAULT_VHOSTNAME);
     wf_server_config_set_port(config->server, WFD_CONFIG_DEFAULT_PORT);
-
-    config->has_authenticator = false;
+    wf_server_config_set_mountpoint_factory(config->server,
+        wfd_mountpoint_factory_create_mountpoint,
+        config->mountpoint_factory);
 
     return config;
 }
@@ -121,6 +137,7 @@ wfd_config_dispose(
     {
         wfd_authenticator_dispose(config->authenticator);
     }
+    wfd_mountpoint_factory_dispose(config->mountpoint_factory);
 
     free(config);
 }

@@ -55,7 +55,17 @@ wfd_MockConfigBuilder_add_auth_provider(
     struct wfd_auth_settings * settings)
 {
     auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->addAuthProvider(settings);
+    return builder->addAuthProvider(settings);
+}
+
+static bool
+wfd_MockConfigBuilder_add_filesystem(
+    void * data,
+    char const * name,
+    char const * mountpoint)
+{
+    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
+    return builder->addFilesystem(name, mountpoint);
 }
 
 
@@ -66,7 +76,8 @@ static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
     &wfd_MockConfigBuilder_set_server_key,
     &wfd_MockConfigBuilder_set_server_cert,
     &wfd_MockConfigBuilder_set_server_document_root,
-    &wfd_MockConfigBuilder_add_auth_provider
+    &wfd_MockConfigBuilder_add_auth_provider,
+    &wfd_MockConfigBuilder_add_filesystem
 };
 
 }
