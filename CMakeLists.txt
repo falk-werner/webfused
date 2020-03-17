@@ -154,17 +154,17 @@ add_dependencies(memcheck alltests)
 
 add_custom_target(coverage
     mkdir -p coverage
-	COMMAND lcov --initial --capture --directory . --output-file coverage/lcov_base.info
+	COMMAND lcov --initial --capture --directory . --output-file coverage/lcov_base.info --rc lcov_branch_coverage=1
 	COMMAND ./alltests
-	COMMAND lcov --capture --directory . --output-file coverage/lcov.info
-	COMMAND lcov -a coverage/lcov_base.info -a coverage/lcov.info --output-file coverage/lcov.info
-	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info
-	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info
+	COMMAND lcov --capture --directory . --output-file coverage/lcov.info --rc lcov_branch_coverage=1
+	COMMAND lcov -a coverage/lcov_base.info -a coverage/lcov.info --output-file coverage/lcov.info --rc lcov_branch_coverage=1
+	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info --rc lcov_branch_coverage=1
+	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info --rc lcov_branch_coverage=1
 )
 add_dependencies(coverage alltests)
 
 add_custom_target(coverage-report
-	COMMAND genhtml -branch-coverage --highlight --legend coverage/lcov.info --output-directory coverage/report
+	COMMAND genhtml --branch-coverage --highlight --legend coverage/lcov.info --output-directory coverage/report
 )
 add_dependencies(coverage-report coverage)
 
