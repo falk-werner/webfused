@@ -154,9 +154,10 @@ add_dependencies(memcheck alltests)
 
 add_custom_target(coverage
     mkdir -p coverage
-	COMMAND lcov --initial --capture --directory . --output-file coverage/lcov.info
+	COMMAND lcov --initial --capture --directory . --output-file coverage/lcov_base.info
 	COMMAND ./alltests
 	COMMAND lcov --capture --directory . --output-file coverage/lcov.info
+	COMMAND lcov -a coverage/lcov_base.info -a coverage/lcov.info --output-file coverage/lcov.info
 	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info
 	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info
 )
