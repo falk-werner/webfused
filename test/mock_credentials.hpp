@@ -1,7 +1,7 @@
 #ifndef WFD_MOCK_CREDENTIALS_HPP
 #define WFD_MOCK_CREDENTIALS_HPP
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 #include "webfuse/adapter/credentials.h"
 
 namespace webfused_test
