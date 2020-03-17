@@ -104,3 +104,8 @@ TEST(log, omit_onclose_if_nullptr)
     WFD_WARN("too bad");
     wfd_logger_close();
 }
+
+TEST(log, default_log)
+{
+    WFD_ERROR("trigger log");
+}
