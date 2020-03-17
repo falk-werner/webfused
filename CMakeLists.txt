@@ -112,10 +112,12 @@ pkg_check_modules(GMOCK gmock)
 add_executable(alltests
 	test/mock_config_builder.cc
 	test/mock_logger.cc
+	test/mock_credentials.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_auth_settings.cc
 	test/test_auth_factory.cc
+	test/test_file_authenticator.cc
 	test/test_log.cc
 )
 
@@ -128,10 +130,14 @@ target_include_directories(alltests PRIVATE
 target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthread")
 
 target_link_libraries(alltests PRIVATE
+	-Wl,--wrap=wf_credentials_type
+	-Wl,--wrap=wf_credentials_get
 	webfused-static
+	userdb
 	${LIBCONFIG_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
+	${OPENSSL_LIBRARIES}
 	${GMOCK_LIBRARIES}
 	${GTEST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
@@ -140,6 +146,7 @@ target_link_libraries(alltests PRIVATE
 # copy test data
 configure_file(etc/webfused.conf webfused.conf COPYONLY)
 configure_file(test/invalid.conf invalid.conf COPYONLY)
+configure_file(test/test_passwd.json test_passwd.json COPYONLY)
 
 enable_testing()
 gtest_discover_tests(alltests TEST_PREFIX alltests:)

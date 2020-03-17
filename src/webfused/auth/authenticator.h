@@ -28,6 +28,10 @@ extern void
 wfd_authenticator_dispose(
     struct wfd_authenticator authenticator);
 
+extern bool
+wfd_authenticator_authenticate(
+    struct wfd_authenticator authenticator,
+    struct wf_credentials * credentials);
 
 #ifdef __cplusplus
 }
