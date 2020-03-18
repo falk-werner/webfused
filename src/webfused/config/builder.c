@@ -43,9 +43,10 @@ wfd_config_builder_set_server_document_root(
 bool
 wfd_config_builder_add_auth_provider(
     struct wfd_config_builder builder,
-    struct wfd_auth_settings * settings)
+    char const * provider,
+    struct wfd_settings * settings)
 {
-    return builder.vtable->add_auth_provider(builder.data, settings);
+    return builder.vtable->add_auth_provider(builder.data, provider, settings);
 }
 
 bool

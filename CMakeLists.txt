@@ -54,7 +54,7 @@ add_library(webfused-static STATIC
 	src/webfused/config/config.c
 	src/webfused/config/factory.c
 	src/webfused/config/builder.c
-	src/webfused/config/auth_settings.c
+	src/webfused/config/settings.c
 	src/webfused/auth/authenticator.c
 	src/webfused/auth/factory.c
 	src/webfused/auth/file_authenticator.c
@@ -116,10 +116,10 @@ add_executable(alltests
 	test/mock_config_builder.cc
 	test/mock_logger.cc
 	test/mock_credentials.cc
-	test/mock_auth_settings.cc
+	test/mock_settings.cc
     test/test_config_factory.cc
 	test/test_config.cc
-	test/test_auth_settings.cc
+	test/test_settings.cc
 	test/test_auth_factory.cc
 	test/test_file_authenticator.cc
 	test/test_mountpoint_factory.cc
@@ -137,8 +137,7 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
-	-Wl,--wrap=wfd_auth_settings_get_provider
-	-Wl,--wrap=wfd_auth_settings_get
+	-Wl,--wrap=wfd_settings_get
 	webfused-static
 	userdb
 	${LIBCONFIG_LIBRARIES}

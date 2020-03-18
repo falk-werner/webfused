@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "webfused/config/config.h"
-#include "mock_auth_settings.hpp"
+#include "mock_settings.hpp"
 
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
@@ -8,7 +8,7 @@
 using ::webfused_test::MockLogger;
 using ::testing::_;
 
-using ::webfused_test::MockAuthSettings;
+using ::webfused_test::MockSettings;
 using ::testing::Return;
 using ::testing::StrEq;
 
@@ -37,11 +37,10 @@ TEST(config, auth_config)
 
     wfd_config_builder builder = wfd_config_get_builder(config);
 
-    MockAuthSettings settings;
-    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    MockSettings settings;
     EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
-    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    bool success = wfd_config_builder_add_auth_provider(builder, "file", nullptr);
     ASSERT_TRUE(success);
 
     wfd_config_dispose(config);
@@ -54,14 +53,13 @@ TEST(config, auth_config_failed_to_add_second_provider)
 
     wfd_config_builder builder = wfd_config_get_builder(config);
 
-    MockAuthSettings settings;
-    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("file"));
+    MockSettings settings;
     EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
-    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    bool success = wfd_config_builder_add_auth_provider(builder, "file", nullptr);
     ASSERT_TRUE(success);
 
-    success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    success = wfd_config_builder_add_auth_provider(builder, "file", nullptr);
     ASSERT_FALSE(success);
 
     wfd_config_dispose(config);
@@ -74,10 +72,7 @@ TEST(config, auth_config_failed_to_add_unknown_provider)
 
     wfd_config_builder builder = wfd_config_get_builder(config);
 
-    MockAuthSettings settings;
-    EXPECT_CALL(settings, getProvider()).Times(1).WillOnce(Return("unknown"));
-
-    bool success = wfd_config_builder_add_auth_provider(builder, nullptr);
+    bool success = wfd_config_builder_add_auth_provider(builder, "unknown", nullptr);
     ASSERT_FALSE(success);
 
     wfd_config_dispose(config);

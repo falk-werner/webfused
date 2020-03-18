@@ -10,7 +10,7 @@ extern "C"
 {
 #endif
 
-struct wfd_auth_settings;
+struct wfd_settings;
 
 typedef void
 wfd_config_builder_set_server_vhostname_fn(
@@ -40,7 +40,8 @@ wfd_config_builder_set_server_document_root_fn(
 typedef bool
 wfd_config_builder_add_auth_provider_fn(
     void * data,
-    struct wfd_auth_settings * settings);
+    char const * provider,
+    struct wfd_settings * settings);
 
 typedef bool
 wfd_config_builder_add_filesystem_fn(
@@ -93,7 +94,8 @@ wfd_config_builder_set_server_document_root(
 extern bool
 wfd_config_builder_add_auth_provider(
     struct wfd_config_builder builder,
-    struct wfd_auth_settings * settings);
+    char const * provider,
+    struct wfd_settings * settings);
 
 extern bool
 wfd_config_builder_add_filesystem(

@@ -1,10 +1,10 @@
 #include "webfused/auth/file_authenticator.h"
-#include "webfused/auth/settings.h"
 #include "webfused/auth/authenticator.h"
-
-#include "webfuse/adapter/credentials.h"
+#include "webfused/config/settings.h"
 #include "userdb/userdb.h"
 #include "webfused/log/log.h"
+
+#include <webfuse/adapter/credentials.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -71,12 +71,12 @@ wfd_file_authenticator_vtable =
 
 bool
 wfd_file_authenticator_create(
-    struct wfd_auth_settings * settings,
+    struct wfd_settings * settings,
     struct wfd_authenticator * authenticator)
 {
     bool result = false;
 
-    char const * filename = wfd_auth_settings_get(settings, "file");
+    char const * filename = wfd_settings_get(settings, "file");
     if (NULL != filename)
     {
         struct wfd_file_authenticator * data = malloc(sizeof(struct wfd_file_authenticator));

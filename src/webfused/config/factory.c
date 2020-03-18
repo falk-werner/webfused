@@ -1,5 +1,5 @@
 #include "webfused/config/factory.h"
-#include "webfused/config/auth_settings.h"
+#include "webfused/config/settings_intern.h"
 #include "webfused/log/log.h"
 
 #include <libconfig.h>
@@ -131,13 +131,12 @@ wfd_config_read_authentication(
 
         if (result)
         {
-            struct wfd_auth_settings * auth_settings = wfd_auth_settings_create(
-                provider_name, settings);
+            struct wfd_settings auth_settings;
+            wfd_settings_init(&auth_settings, settings);
 
-            result = wfd_config_builder_add_auth_provider(builder, auth_settings);
-            wfd_auth_settings_dispose(auth_settings);
+            result = wfd_config_builder_add_auth_provider(builder, provider_name, &auth_settings);
+            wfd_settings_cleanup(&auth_settings);
         }
-
     }
     
     return result;

@@ -52,10 +52,11 @@ wfd_MockConfigBuilder_set_server_document_root(
 static bool
 wfd_MockConfigBuilder_add_auth_provider(
     void * data,
-    struct wfd_auth_settings * settings)
+    char const * provider,
+    struct wfd_settings * settings)
 {
     auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    return builder->addAuthProvider(settings);
+    return builder->addAuthProvider(provider, settings);
 }
 
 static bool

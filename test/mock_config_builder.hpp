@@ -16,7 +16,7 @@ public:
     virtual void setServerKey(char const * key_path) = 0;
     virtual void setServerCert(char const * cert_path) = 0;
     virtual void setServerDocumentRoot(char const * document_root) = 0;
-    virtual bool addAuthProvider(wfd_auth_settings * settings) = 0;
+    virtual bool addAuthProvider(char const * provider, wfd_settings * settings) = 0;
     virtual bool addFilesystem(char const * name, char const * mountpoint) = 0;
 };
 
@@ -29,7 +29,7 @@ public:
     MOCK_METHOD1(setServerKey, void (char const * key_path));
     MOCK_METHOD1(setServerCert, void (char const * cert_path));
     MOCK_METHOD1(setServerDocumentRoot, void (char const * document_root));
-    MOCK_METHOD1(addAuthProvider, bool (wfd_auth_settings * settings));
+    MOCK_METHOD2(addAuthProvider, bool (char const * provider, wfd_settings * settings));
     MOCK_METHOD2(addFilesystem, bool (char const * name, char const * mountpoint));
 
     struct wfd_config_builder getBuilder();

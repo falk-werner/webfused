@@ -12,11 +12,11 @@ extern "C"
 #endif
 
 struct wfd_authenticator;
-struct wfd_auth_settings;
+struct wfd_settings;
 
 extern bool
 wfd_file_authenticator_create(
-    struct wfd_auth_settings * settings,
+    struct wfd_settings * settings,
     struct wfd_authenticator * authenticator);
 
 #ifdef __cplusplus

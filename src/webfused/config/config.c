@@ -65,14 +65,15 @@ wfd_config_set_server_document_root(
 static bool
 wfd_config_add_auth_provider(
     void * data,
-    struct wfd_auth_settings * settings)
+    char const * provider,
+    struct wfd_settings * settings)
 {
     bool result = false;
     struct wfd_config * config = data;
 
     if (!config->has_authenticator)
     {
-        result = wfd_authenticator_create(settings, &config->authenticator);
+        result = wfd_authenticator_create(provider, settings, &config->authenticator);
         if (result)
         {
             wf_server_config_add_authenticator(

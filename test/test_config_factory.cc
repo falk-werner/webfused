@@ -19,7 +19,7 @@ TEST(config, is_loadable)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
     EXPECT_CALL(builder, setServerPort(8080)).Times(1);
-    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(true));
     EXPECT_CALL(builder, addFilesystem(_,_)).Times(1).WillOnce(Return(true));
 
     bool result = wfd_config_load_file(builder.getBuilder(), "webfused.conf");
@@ -262,7 +262,7 @@ TEST(config, authentication)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(true));    
+    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(true));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -283,7 +283,7 @@ TEST(config, failed_create_authenticator)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, addAuthProvider(_)).Times(1).WillOnce(Return(false));    
+    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(false));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
