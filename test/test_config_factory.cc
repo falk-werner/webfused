@@ -268,10 +268,12 @@ TEST(config, authentication)
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "authentication:\n"
-        "{\n"
-        "  provider = \"test\"\n"
-        "  settings: { }\n"
-        "}\n"
+        "(\n"
+        "  {\n"
+        "    provider = \"test\"\n"
+        "    settings: { }\n"
+        "  }\n"
+        ")\n"
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_TRUE(result);
@@ -289,10 +291,12 @@ TEST(config, failed_create_authenticator)
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "authentication:\n"
-        "{\n"
-        "  provider = \"test\"\n"
-        "  settings: { }\n"
-        "}\n"
+        "(\n"
+        "  {\n"
+        "    provider = \"test\"\n"
+        "    settings: { }\n"
+        "  }\n"
+        ")\n"
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_FALSE(result);
@@ -309,9 +313,11 @@ TEST(config, failed_missing_auth_provider)
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "authentication:\n"
-        "{\n"
-        "  settings: { }\n"
-        "}\n"
+        "(\n"
+        "  {\n"
+        "    settings: { }\n"
+        "  }\n"
+        ")\n"
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_FALSE(result);
@@ -328,9 +334,11 @@ TEST(config, failed_missing_auth_settings)
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
         "authentication:\n"
-        "{\n"
-        "  provider = \"test\"\n"
-        "}\n"
+        "(\n"
+        "  {\n"
+        "    provider = \"test\"\n"
+        "  }\n"
+        ")\n"
         ;
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_FALSE(result);

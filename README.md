@@ -37,15 +37,15 @@ server:
 }
 
 authentication:
-{
-    # name of authenticaton provider
-    provider = "file"
-
-    settings:
+(
     {
-        file = "/etc/webfused/passwd"
+        provider = "file"
+        settings:
+        {
+            file = "/etc/webfused/passwd"
+        }
     }
-}
+)
 
 filesystems:
 (
