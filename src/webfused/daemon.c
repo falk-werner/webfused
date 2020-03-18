@@ -13,8 +13,9 @@
 #include <webfuse_adapter.h>
 #include "webfused/config/config.h"
 #include "webfused/config/factory.h"
-#include "webfused/log/stderr_logger.h"
 #include "webfused/log/log.h"
+#include "webfused/log/logger.h"
+#include "webfused/log/stderr_logger.h"
 
 #define WFD_SERVICE_TIMEOUT (1 * 1000)
 #define WFD_DEFAULT_CONFIG_FILE ("/etc/webfuse.conf")
@@ -141,6 +142,7 @@ int wfd_daemon_run(int argc, char * argv[])
 		show_help();
 	}
 
+	wfd_logger_close();
 	free(args.config_file);
 	return result;
 }

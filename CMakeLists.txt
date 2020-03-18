@@ -60,6 +60,7 @@ add_library(webfused-static STATIC
 	src/webfused/auth/file_authenticator.c
 	src/webfused/log/logger.c
 	src/webfused/log/stderr_logger.c
+	src/webfused/log/syslog_logger.c
 )
 
 add_executable(webfused
