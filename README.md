@@ -14,7 +14,145 @@ To install dependecies, see below.
     cd build
     cmake ..
     make
-    ./webfused -m test --port=4711
+    ./webfused -f webfused.conf
+
+## Config file
+
+```
+version = { major = 1, minor = 0 }
+
+server:
+{
+    vhost_name = "localhost"
+    port = 8080
+
+    tls:
+    {
+       certificate = "/etc/webfused/cert.pem"
+
+       key = "/etc/webfused/key.pem"
+    }
+
+    document_root = "/var/www"
+}
+
+authentication:
+{
+    # name of authenticaton provider
+    provider = "file"
+
+    settings:
+    {
+        file = "/etc/webfused/passwd"
+    }
+}
+
+filesystems:
+(
+    {name = "test",  mount_point = "/tmp/webfused" }
+)
+
+log:
+{
+    provider: "syslog"
+    level: "warning"
+    settings:
+    {
+        ident = "webfused"
+        facility = "daemon"
+        log_pid = true
+    }
+}
+```
+
+### Version
+
+The version sections specifies the schema version of the config file.
+Currently, there is only one schema version defined: 1.0
+
+### Server
+
+| Setting       | Type   | Default value | Description              |
+| ------------- | ------ | ------------- | ------------------------ |
+| vhostname     | string | localhost     | Name of the virtual host |
+| port          | int    | 8080          | Port number of server    |
+| document_root | string | *-empty-*     | Path of HTTP files       |
+| tls           | object | *-empty-*     | see below                |
+
+When *document_root* is omitted, no HTTP files are served.
+
+#### TLS
+
+| Setting     | Type   | Default value | Description                                 |
+| ----------- | ------ | ------------- | ------------------------------------------- |
+| certificate | string | *-empty-*     | Path to servers own certificate (.pem file) |
+| key         | string | *-empty-*     | Path to servers own private key (.pem file) |
+
+TLS is only activated, when both, *certificate* and *key* are specified.
+Otherwise, plain websockes without TLS are used.
+
+### Authentication
+
+| Setting  | Type   | Default value | Description                                     |
+| -------- | ------ | ------------- | ----------------------------------------------- |
+| provider | string | *-required-*  | Name of the authentication provider (see below) |
+| settings | object | *-empty-*     | Provider specific settings (see below)
+
+Currently, only one provider is specified:
+
+- *file*: file based authentication
+
+### File Authenticaton Provider
+
+Allows authentication against a file containing username and password.
+
+| Setting  | Type   | Default value | Description                     |
+| -------- | ------ | ------------- | ------------------------------- |
+| file     | string | *-empty-*     | Path to the authentication file |
+
+### Filesystems
+
+Contains a list of file systems that can be provided by webfuse providers.
+
+| Setting     | Type   | Default value | Description                        |
+| ----------- | ------ | ------------- | ---------------------------------- |
+| name        | string | *-required-*  | Name of the filesystem             |
+| mount_point | string | *-required-*  | Local path to mount the filesystem |
+
+### Log
+
+| Setting     | Type   | Default value | Description                            |
+| ----------- | ------ | ------------- | -------------------------------------- |
+| provider    | string | *-required-*  | Name of log provider (see below)       |
+| level       | string | *-required-*  | Log level (see below)                  |
+| settings    | object | *-empty-*     | Provider specific settings (see below) |
+
+The following log levels are supported:
+
+- *none*: diabled logging
+- *fatal*: log only fatal errors
+- *error*: log all kind of errors
+- *warn*: log errors and warnings
+- *info*: log info messages, warnings and errors
+- *debug*: log debug and info messages as well as warnings and errors
+- *all*: log all kind of messages
+
+Currently, the following providers are available:
+
+- *stderr*: logs to console error output
+- *syslog*: logs to syslog
+
+#### Stderr Logger
+
+This logger does not provide any settings.
+
+#### Syslog Logger
+
+| Setting     | Type   | Default value | Description                                |
+| ----------- | ------ | ------------- | ------------------------------------------ |
+| ident       | string | webfused      | Syslog ident (see syslog documentation)    |
+| facility    | string | daemon        | Syslog facility (see syslog documentation) |
+| log_pid     | bool   | false         | Add process ID to log messages             |
 
 ## Dependencies
 
@@ -51,7 +189,6 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
     cmake ..
     make
     sudo make install
-
 
 #### jansson
 
