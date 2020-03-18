@@ -11,7 +11,9 @@ class ISettings
 {
 public:
     virtual ~ISettings() = default;
-    virtual char const * get(char const * key) = 0;
+    virtual char const * getString(char const * key) = 0;
+    virtual char const * getStringOrDefault(char const * key, char const * default_value) = 0;
+    virtual bool getBool(char const * key) = 0;
 };
 
 class MockSettings: public ISettings
@@ -19,7 +21,9 @@ class MockSettings: public ISettings
 public:
     MockSettings();
     ~MockSettings() override;
-    MOCK_METHOD1(get, char const * (char const * key));
+    MOCK_METHOD1(getString, char const * (char const * key));
+    MOCK_METHOD2(getStringOrDefault, char const * (char const * key, char const * default_value));
+    MOCK_METHOD1(getBool, bool (char const * key));
 };
 
 }

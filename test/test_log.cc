@@ -109,3 +109,62 @@ TEST(log, default_log)
 {
     WFD_ERROR("trigger log");
 }
+
+TEST(log, loglevel_parse)
+{
+    int level;
+
+    ASSERT_TRUE(wfd_log_level_parse("fatal", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_FATAL, level);
+    ASSERT_TRUE(wfd_log_level_parse("FATAL", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_FATAL, level);
+
+    ASSERT_TRUE(wfd_log_level_parse("error", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_ERROR, level);
+    ASSERT_TRUE(wfd_log_level_parse("ERROR", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_ERROR, level);
+
+    ASSERT_TRUE(wfd_log_level_parse("warn", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_WARN, level);
+    ASSERT_TRUE(wfd_log_level_parse("WARN", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_WARN, level);
+    ASSERT_TRUE(wfd_log_level_parse("warning", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_WARN, level);
+    ASSERT_TRUE(wfd_log_level_parse("WARNING", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_WARN, level);
+
+    ASSERT_TRUE(wfd_log_level_parse("info", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_INFO, level);
+    ASSERT_TRUE(wfd_log_level_parse("INFO", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_INFO, level);
+
+    ASSERT_TRUE(wfd_log_level_parse("debug", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_DEBUG, level);
+    ASSERT_TRUE(wfd_log_level_parse("DEBUG", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_DEBUG, level);
+
+    ASSERT_FALSE(wfd_log_level_parse("<invalid>", &level));
+
+    ASSERT_TRUE(wfd_log_level_parse("all", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_ALL, level);
+    ASSERT_TRUE(wfd_log_level_parse("ALL", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_ALL, level);
+
+    ASSERT_TRUE(wfd_log_level_parse("none", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_NONE, level);
+    ASSERT_TRUE(wfd_log_level_parse("NONE", &level));
+    ASSERT_EQ(WFD_LOGLEVEL_NONE, level);
+
+}
+
+TEST(log, log_level_tostring)
+{
+    ASSERT_STREQ("none", wfd_log_level_tostring(WFD_LOGLEVEL_NONE));
+    ASSERT_STREQ("fatal", wfd_log_level_tostring(WFD_LOGLEVEL_FATAL));
+    ASSERT_STREQ("error", wfd_log_level_tostring(WFD_LOGLEVEL_ERROR));
+    ASSERT_STREQ("warn", wfd_log_level_tostring(WFD_LOGLEVEL_WARN));
+    ASSERT_STREQ("info", wfd_log_level_tostring(WFD_LOGLEVEL_INFO));
+    ASSERT_STREQ("debug", wfd_log_level_tostring(WFD_LOGLEVEL_DEBUG));
+    ASSERT_STREQ("all", wfd_log_level_tostring(WFD_LOGLEVEL_ALL));
+    ASSERT_STREQ("<unknown>", wfd_log_level_tostring(42));
+}

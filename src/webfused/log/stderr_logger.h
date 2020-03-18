@@ -2,9 +2,7 @@
 #define WFD_LOG_STDERR_LOGGER_H
 
 #ifndef __cplusplus
-#include <stdarg.h>
-#else
-#include <cstdarg>
+#include <stdbool.h>
 #endif
 
 #ifdef __cplusplus
@@ -12,17 +10,12 @@ extern "C"
 {
 #endif
 
-extern void 
-wfd_stderr_logger_log(
-    void * user_data,
-    int level,
-    char const * format,
-    va_list args);
+struct wfd_settings;
 
-
-extern void
+extern bool
 wfd_stderr_logger_init(
-    int level);
+    int level,
+    struct wfd_settings * settings);
 
 #ifdef __cplusplus
 }

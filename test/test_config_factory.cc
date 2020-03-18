@@ -17,6 +17,7 @@ using ::webfused_test::MockConfigBuilder;
 TEST(config, is_loadable)
 {
     StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_,_,_)).Times(1).WillOnce(Return(true));
     EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
     EXPECT_CALL(builder, setServerPort(8080)).Times(1);
     EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(true));
@@ -433,3 +434,107 @@ TEST(config, filesystems_failed_missing_mountpoint)
     bool result = wfd_config_load_string(builder.getBuilder(), config_text);
     ASSERT_FALSE(result);
 }
+
+TEST(config, log)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_, _, _)).Times(1).WillOnce(Return(true));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "log:\n"
+        "{\n"
+        "  provider = \"stderr\"\n"
+        "  level    = \"all\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
+}
+
+TEST(config, log_fail_set_logger)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_, _, _)).Times(1).WillOnce(Return(false));    
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "log:\n"
+        "{\n"
+        "  provider = \"stderr\"\n"
+        "  level    = \"all\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, log_fail_missing_provider)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "log:\n"
+        "{\n"
+        "  level    = \"all\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, log_fail_missing_level)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "log:\n"
+        "{\n"
+        "  provider = \"stderr\"\n"
+        "  level    = \"fancy\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, log_fail_invalid_level)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "log:\n"
+        "{\n"
+        "  provider = \"stderr\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+

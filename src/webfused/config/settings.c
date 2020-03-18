@@ -20,13 +20,41 @@ wfd_settings_cleanup(
 }
 
 char const *
-wfd_settings_get(
+wfd_settings_get_string(
     struct wfd_settings * settings,
     char const * key)
 {
+    if (NULL == settings) {return NULL; }
+
     char const * result;
     int rc = config_setting_lookup_string(settings->setting, key, &result);
 
     return (CONFIG_TRUE == rc) ? result : NULL;
 }
 
+char const *
+wfd_settings_get_string_or_default(
+    struct wfd_settings * settings,
+    char const * key,
+    char const * default_value)
+{
+    if (NULL == settings) {return default_value; }
+
+    char const * result;
+    int rc = config_setting_lookup_string(settings->setting, key, &result);
+
+    return (CONFIG_TRUE == rc) ? result : default_value;
+}
+
+bool
+wfd_settings_get_bool(
+    struct wfd_settings * settings,
+    char const * key)
+{
+    if (NULL == settings) {return false; }
+
+    int result;
+    int rc = config_setting_lookup_bool(settings->setting, key, &result);
+
+    return ((CONFIG_TRUE == rc) && (CONFIG_TRUE == result));
+}

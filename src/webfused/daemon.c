@@ -98,7 +98,7 @@ static void on_interrupt(int signal_id)
 
 int wfd_daemon_run(int argc, char * argv[])
 {
-	wfd_stderr_logger_init(WFD_LOGLEVEL_ALL);
+	wfd_stderr_logger_init(WFD_LOGLEVEL_ALL, NULL);
 
 	struct args args;
 	int result = parse_arguments(argc, argv, &args);

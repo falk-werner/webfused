@@ -3,6 +3,7 @@
 #include "webfused/auth/factory.h"
 #include "webfused/auth/authenticator.h"
 #include "webfused/mountpoint_factory.h"
+#include "webfused/log/manager.h"
 
 #include <stdlib.h>
 
@@ -100,6 +101,17 @@ wfd_config_add_filesystem(
         config->mountpoint_factory, name, mount_point);
 }
 
+static bool
+wfd_config_set_logger(
+    void * data,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings)
+{
+    struct wfd_config * config = data;
+    return wfd_log_manager_set_logger(provider, level, settings);
+}
+
 static const struct wfd_config_builder_vtable 
 wfd_config_vtable_config_builder =
 {
@@ -109,7 +121,8 @@ wfd_config_vtable_config_builder =
     .set_server_cert = &wfd_config_set_server_cert,
     .set_server_document_root = &wfd_config_set_server_document_root,
     .add_auth_provider = &wfd_config_add_auth_provider,
-    .add_filesystem = &wfd_config_add_filesystem
+    .add_filesystem = &wfd_config_add_filesystem,
+    .set_logger = &wfd_config_set_logger
 };
 
 struct wfd_config *

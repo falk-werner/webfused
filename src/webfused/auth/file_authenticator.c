@@ -76,7 +76,7 @@ wfd_file_authenticator_create(
 {
     bool result = false;
 
-    char const * filename = wfd_settings_get(settings, "file");
+    char const * filename = wfd_settings_get_string(settings, "file");
     if (NULL != filename)
     {
         struct wfd_file_authenticator * data = malloc(sizeof(struct wfd_file_authenticator));

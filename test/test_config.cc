@@ -38,7 +38,7 @@ TEST(config, auth_config)
     wfd_config_builder builder = wfd_config_get_builder(config);
 
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
     bool success = wfd_config_builder_add_auth_provider(builder, "file", nullptr);
     ASSERT_TRUE(success);
@@ -54,7 +54,7 @@ TEST(config, auth_config_failed_to_add_second_provider)
     wfd_config_builder builder = wfd_config_get_builder(config);
 
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
     bool success = wfd_config_builder_add_auth_provider(builder, "file", nullptr);
     ASSERT_TRUE(success);
@@ -86,6 +86,19 @@ TEST(config, add_filesystem)
     wfd_config_builder builder = wfd_config_get_builder(config);
 
     bool success = wfd_config_builder_add_filesystem(builder, "test", "/tmp/test");
+    ASSERT_TRUE(success);
+
+    wfd_config_dispose(config);
+}
+
+TEST(config, set_logger)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    bool success = wfd_config_builder_set_logger(builder, "stderr", WFD_LOGLEVEL_ALL, nullptr);
     ASSERT_TRUE(success);
 
     wfd_config_dispose(config);

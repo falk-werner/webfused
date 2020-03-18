@@ -2,6 +2,7 @@
 #define WFD_LOG_H
 
 #ifndef __cplusplus
+#include <stdbool.h>
 #include <stdarg.h>
 #else
 #include <cstdarg>
@@ -16,6 +17,7 @@ extern "C"
 #define WFD_LOGLEVEL WFD_LOGLEVEL_ALL
 #endif
 
+#define WFD_LOGLEVEL_NONE -1
 #define WFD_LOGLEVEL_FATAL 1
 #define WFD_LOGLEVEL_ERROR 3
 #define WFD_LOGLEVEL_WARN  4
@@ -50,6 +52,14 @@ wfd_log(
     int level,
     char const * format,
     ...);
+
+extern char const *
+wfd_log_level_tostring(int level);
+
+extern bool
+wfd_log_level_parse(
+    char const * level,
+    int * result);
 
 #ifdef __cplusplus
 }

@@ -58,7 +58,9 @@ add_library(webfused-static STATIC
 	src/webfused/auth/authenticator.c
 	src/webfused/auth/factory.c
 	src/webfused/auth/file_authenticator.c
+	src/webfused/log/log.c
 	src/webfused/log/logger.c
+	src/webfused/log/manager.c
 	src/webfused/log/stderr_logger.c
 	src/webfused/log/syslog_logger.c
 )
@@ -124,6 +126,9 @@ add_executable(alltests
 	test/test_file_authenticator.cc
 	test/test_mountpoint_factory.cc
 	test/test_log.cc
+	test/test_log_manager.cc
+	test/test_stderr_logger.cc
+	test/test_syslog_logger.cc
 )
 
 target_include_directories(alltests PRIVATE
@@ -137,7 +142,9 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
-	-Wl,--wrap=wfd_settings_get
+	-Wl,--wrap=wfd_settings_get_string
+	-Wl,--wrap=wfd_settings_get_string_or_default
+	-Wl,--wrap=wfd_settings_get_bool
 	webfused-static
 	userdb
 	${LIBCONFIG_LIBRARIES}

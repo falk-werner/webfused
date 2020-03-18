@@ -58,4 +58,15 @@ wfd_config_builder_add_filesystem(
     return builder.vtable->add_filesystem(builder.data, name, mount_point);
 }
 
+bool
+wfd_config_builder_set_logger(
+    struct wfd_config_builder builder,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings)
+{
+    return builder.vtable->set_logger(builder.data, provider, level, settings);
+}
+
+
 

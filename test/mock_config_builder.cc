@@ -69,6 +69,17 @@ wfd_MockConfigBuilder_add_filesystem(
     return builder->addFilesystem(name, mountpoint);
 }
 
+static bool
+wfd_MockConfigBuilder_set_logger(
+    void * data,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings)
+{
+    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
+    return builder->setLogger(provider, level, settings);
+}
+
 
 static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
 {
@@ -78,7 +89,8 @@ static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
     &wfd_MockConfigBuilder_set_server_cert,
     &wfd_MockConfigBuilder_set_server_document_root,
     &wfd_MockConfigBuilder_add_auth_provider,
-    &wfd_MockConfigBuilder_add_filesystem
+    &wfd_MockConfigBuilder_add_filesystem,
+    &wfd_MockConfigBuilder_set_logger
 };
 
 }

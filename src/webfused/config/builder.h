@@ -49,6 +49,13 @@ wfd_config_builder_add_filesystem_fn(
     char const * name,
     char const * mount_point);
 
+typedef bool
+wfd_config_builder_set_logger_fn(
+    void * data,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings);
+
 struct wfd_config_builder_vtable
 {
     wfd_config_builder_set_server_vhostname_fn * set_server_vhostname;
@@ -58,6 +65,7 @@ struct wfd_config_builder_vtable
     wfd_config_builder_set_server_document_root_fn * set_server_document_root;
     wfd_config_builder_add_auth_provider_fn * add_auth_provider;
     wfd_config_builder_add_filesystem_fn * add_filesystem;
+    wfd_config_builder_set_logger_fn * set_logger;
 };
 
 struct wfd_config_builder
@@ -102,6 +110,13 @@ wfd_config_builder_add_filesystem(
     struct wfd_config_builder builder,
     char const * name,
     char const * mount_point);
+
+extern bool
+wfd_config_builder_set_logger(
+    struct wfd_config_builder builder,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings);
 
 #ifdef __cplusplus
 }

@@ -56,6 +56,59 @@ wfd_config_check_version(
 }
 
 static bool
+wfd_config_read_logger(
+    config_t * config,
+    struct wfd_config_builder builder)
+{
+    bool result = true;
+
+    bool hasLogger = (NULL != config_lookup(config, "log"));
+    if (hasLogger)
+    {
+        char const * provider;
+        int rc = config_lookup_string(config, "log.provider", &provider);
+        if (CONFIG_TRUE != rc)
+        {
+            WFD_ERROR("missing log provider");
+            result = false;
+        }
+
+        char const * level_str;
+        if (result)
+        {
+            rc = config_lookup_string(config, "log.level", &level_str);
+            if (CONFIG_TRUE != rc)
+            {
+                WFD_ERROR("missing log level");
+                result = false;
+            }
+        }
+
+        int level;
+        if (result)
+        {
+            bool success = wfd_log_level_parse(level_str, &level);
+            if (!success)
+            {
+                WFD_ERROR("failed to parse log level: unknown valuie \'%s\'", level_str);
+                result = false;
+            }
+        }
+
+        if (result)
+        {
+            config_setting_t * setting = config_lookup(config, "log.settings");
+            struct wfd_settings settings;
+            wfd_settings_init(&settings, setting);
+            result = wfd_config_builder_set_logger(builder, provider, level, &settings);
+            wfd_settings_cleanup(&settings);
+        }
+    }
+
+    return result;
+}
+
+static bool
 wfd_config_read_server(
     config_t * config,
     struct wfd_config_builder builder)
@@ -198,6 +251,7 @@ wfd_config_load(
 {
 
     bool result = wfd_config_check_version(config)
+        && wfd_config_read_logger(config, builder)
         && wfd_config_read_server(config, builder)
         && wfd_config_read_authentication(config, builder)
         && wfd_config_read_filesystems(config, builder)

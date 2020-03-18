@@ -17,7 +17,7 @@ using ::testing::StrEq;
 TEST(file_authenticator, create)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -29,7 +29,7 @@ TEST(file_authenticator, create)
 TEST(file_authenticator, create_fail_missing_file)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return(nullptr));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return(nullptr));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -39,7 +39,7 @@ TEST(file_authenticator, create_fail_missing_file)
 TEST(file_authenticator, create_via_factory)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_authenticator_create("file", nullptr, &authenticator);
@@ -51,7 +51,7 @@ TEST(file_authenticator, create_via_factory)
 TEST(file_authenticator, authenticate)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -70,7 +70,7 @@ TEST(file_authenticator, authenticate)
 TEST(file_authenticator, authenticate_fail_wrong_passwd)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -89,7 +89,7 @@ TEST(file_authenticator, authenticate_fail_wrong_passwd)
 TEST(file_authenticator, authenticate_fail_no_passwd_file)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("unknown_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("unknown_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -108,7 +108,7 @@ TEST(file_authenticator, authenticate_fail_no_passwd_file)
 TEST(file_authenticator, authenticate_fail_missing_username)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -127,7 +127,7 @@ TEST(file_authenticator, authenticate_fail_missing_username)
 TEST(file_authenticator, authenticate_fail_missing_password)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("test_passwd.json"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
@@ -146,7 +146,7 @@ TEST(file_authenticator, authenticate_fail_missing_password)
 TEST(file_authenticator, get_type)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, get(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
     wfd_authenticator authenticator;
     bool success = wfd_file_authenticator_create(nullptr, &authenticator);
