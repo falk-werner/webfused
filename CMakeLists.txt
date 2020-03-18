@@ -129,6 +129,7 @@ add_executable(alltests
 	test/test_log_manager.cc
 	test/test_stderr_logger.cc
 	test/test_syslog_logger.cc
+	test/test_daemon.cc
 )
 
 target_include_directories(alltests PRIVATE
@@ -180,6 +181,7 @@ add_custom_target(coverage
 	COMMAND lcov -a coverage/lcov_base.info -a coverage/lcov.info --output-file coverage/lcov.info --rc lcov_branch_coverage=1
 	COMMAND lcov --remove coverage/lcov.info '/usr/*' --output-file coverage/lcov.info --rc lcov_branch_coverage=1
 	COMMAND lcov --remove coverage/lcov.info '*/test/*' --output-file coverage/lcov.info --rc lcov_branch_coverage=1
+	COMMAND lcov --remove coverage/lcov.info '*/main.c' --output-file coverage/lcov.info --rc lcov_branch_coverage=1
 )
 add_dependencies(coverage alltests)
 

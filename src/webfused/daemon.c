@@ -56,6 +56,7 @@ static int parse_arguments(int argc, char * argv[], struct args * args)
 
 	bool result = EXIT_SUCCESS;
 	bool finished = false;
+	optind = 0;
 	while ((!finished) && (EXIT_SUCCESS == result))
 	{
 		int option_index = 0;
@@ -144,6 +145,7 @@ int wfd_daemon_run(int argc, char * argv[])
 
 	wfd_logger_close();
 	free(args.config_file);
+	shutdown_requested = false;
 	return result;
 }
 
