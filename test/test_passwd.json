@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "type": "wf-userdb",
+    "major": 1,
+    "minor": 0,
+    "hash_algorithm": "sha512"
+  },
+  "users": {
+    "bob": {
+      "password_hash": "e51e27ce47054feead3d83068d47f2a07307d4877ac67da668ef43e0e466fe8c7b66651af14fdb8d48c51592ef5afa0c63f874d20861c6b9ef8e6513bfcaa330",
+      "salt": "b3be6979921edecfea88c50d0d1ec40b7f8c383831b2276c65969ead18e47c03"
+    }
+  }
+}
