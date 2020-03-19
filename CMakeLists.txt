@@ -3,6 +3,8 @@ project(webfused VERSION 0.1.0 DESCRIPTION "Webfuse daemon")
 
 option(WITHOUT_TESTS   "disable unit tests"   OFF)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -14,6 +16,7 @@ pkg_check_modules(UUID REQUIRED uuid)
 pkg_check_modules(LIBCONFIG REQUIRED libconfig)
 pkg_check_modules(OPENSSL REQUIRED openssl)
 pkg_check_modules(WEBFUSE REQUIRED libwebfuse-adapter)
+find_package(Pam REQUIRED)
 
 add_definitions(-D_FILE_OFFSET_BITS=64)
 
@@ -33,7 +36,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(C_WARNINGS -Wall -Wextra)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(coverage)
 
 add_library(userdb STATIC 
@@ -76,6 +78,7 @@ target_link_libraries(webfused PUBLIC
     ${OPENSSL_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
+	${PAM_LIBRARIES}
 )
 
 target_compile_options(webfused PUBLIC ${OPENSSL_CFLAGS_OTHER})
@@ -130,6 +133,7 @@ add_executable(alltests
 	test/test_stderr_logger.cc
 	test/test_syslog_logger.cc
 	test/test_daemon.cc
+	test/test_pam.cc
 )
 
 target_include_directories(alltests PRIVATE
@@ -165,6 +169,7 @@ target_link_libraries(alltests PRIVATE
 	${LIBCONFIG_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
+	${PAM_LIBRARIES}
 	${OPENSSL_LIBRARIES}
 	${GMOCK_LIBRARIES}
 	${GTEST_LIBRARIES}

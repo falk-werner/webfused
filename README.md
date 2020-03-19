@@ -180,6 +180,7 @@ switch to *user* and *group* provided in config file.
   - [jansson](https://github.com/akheron/jansson)
 - [openssl](https://www.openssl.org/)
 - [libconfig](https://hyperrealm.github.io/libconfig/)
+- [linux-pam](http://www.linux-pam.org/)
 - [Google Test](https://github.com/google/googletest) *(Test only)*
 
 ### Installing dependencies
@@ -239,6 +240,11 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
 
     sudo apt update
     sudo apt install libconfig-dev
+
+#### linux-pam
+
+    sudo apt update
+    sudo apt install libpam0g-dev
 
 #### GoogleTest
 
