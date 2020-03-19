@@ -60,6 +60,7 @@ add_library(webfused-static STATIC
 	src/webfused/auth/authenticator.c
 	src/webfused/auth/factory.c
 	src/webfused/auth/file_authenticator.c
+	src/webfused/auth/pam_authenticator.c
 	src/webfused/log/log.c
 	src/webfused/log/logger.c
 	src/webfused/log/manager.c
@@ -122,18 +123,19 @@ add_executable(alltests
 	test/mock_logger.cc
 	test/mock_credentials.cc
 	test/mock_settings.cc
+	test/mock_pam.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_settings.cc
 	test/test_auth_factory.cc
 	test/test_file_authenticator.cc
+	test/test_pam_authenticator.cc
 	test/test_mountpoint_factory.cc
 	test/test_log.cc
 	test/test_log_manager.cc
 	test/test_stderr_logger.cc
 	test/test_syslog_logger.cc
 	test/test_daemon.cc
-	test/test_pam.cc
 )
 
 target_include_directories(alltests PRIVATE
@@ -163,6 +165,12 @@ target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wfd_config_add_filesystem
 	-Wl,--wrap=wfd_config_set_logger
 	-Wl,--wrap=wfd_config_set_user
+
+	-Wl,--wrap=pam_start
+	-Wl,--wrap=pam_end
+	-Wl,--wrap=pam_strerror
+	-Wl,--wrap=pam_authenticate
+	-Wl,--wrap=pam_acct_mgmt
 
 	webfused-static
 	userdb
