@@ -4,118 +4,251 @@ extern "C"
 {
 using webfused_test::IConfigBuilder;
 
-static void
-wfd_MockConfigBuilder_set_server_vhostname(
-    void * data,
+static IConfigBuilder * wfd_MockConfigBuilder = nullptr;
+
+extern struct wfd_config *
+__real_wfd_config_create(void);
+
+extern void
+__real_wfd_config_dispose(
+    struct wfd_config * config);
+
+extern void
+__real_wfd_config_set_server_vhostname(
+    struct wfd_config * config,
+    char const * vhost_name);
+
+extern void
+__real_wfd_config_set_server_port(
+    struct wfd_config * config,
+    int port);
+
+extern void
+__real_wfd_config_set_server_key(
+    struct wfd_config * config,
+    char const * key_path);
+
+extern void
+__real_wfd_config_set_server_cert(
+    struct wfd_config * config,
+    char const * cert_path);
+
+extern void
+__real_wfd_config_set_server_document_root(
+    struct wfd_config * config,
+    char const * document_root);
+
+extern bool
+__real_wfd_config_add_auth_provider(
+    struct wfd_config * config,
+    char const * provider,
+    struct wfd_settings * settings);
+
+extern bool
+__real_wfd_config_add_filesystem(
+    struct wfd_config * config,
+    char const * name,
+    char const * mount_point);
+
+extern bool
+__real_wfd_config_set_logger(
+    struct wfd_config * config,
+    char const * provider,
+    int level,
+    struct wfd_settings * settings);
+
+extern void
+__real_wfd_config_set_user(
+    struct wfd_config * config,
+    char const * user,
+    char const * group);
+
+struct wfd_config *
+__wrap_wfd_config_create(void)
+{
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        return __real_wfd_config_create();
+    }
+    else
+    {
+        return wfd_MockConfigBuilder->create();
+    }
+}
+
+void
+__wrap_wfd_config_dispose(
+    struct wfd_config * config)
+{
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_dispose(config);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->dispose(config);
+    }
+}
+
+void
+__wrap_wfd_config_set_server_vhostname(
+    struct wfd_config * config,
     char const * vhost_name)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->setServerVhostname(vhost_name);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_server_vhostname(config, vhost_name);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setServerVhostname(vhost_name);
+    }
 }
 
-static void
-wfd_MockConfigBuilder_set_server_port(
-    void * data,
+void
+__wrap_wfd_config_set_server_port(
+    struct wfd_config * config,
     int port)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->setServerPort(port);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_server_port(config, port);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setServerPort(port);
+    }
 }
 
-static void
-wfd_MockConfigBuilder_set_server_key(
-    void * data,
+void
+__wrap_wfd_config_set_server_key(
+    struct wfd_config * config,
     char const * key_path)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->setServerKey(key_path);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_server_key(config, key_path);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setServerKey(key_path);
+    }
 }
 
-static void
-wfd_MockConfigBuilder_set_server_cert(
-    void * data,
+void
+__wrap_wfd_config_set_server_cert(
+    struct wfd_config * config,
     char const * cert_path)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->setServerCert(cert_path);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_server_cert(config, cert_path);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setServerCert(cert_path);
+    }
 }
 
-static void
-wfd_MockConfigBuilder_set_server_document_root(
-    void * data,
+void
+__wrap_wfd_config_set_server_document_root(
+    struct wfd_config * config,
     char const * document_root)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    builder->setServerDocumentRoot(document_root);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_server_document_root(config, document_root);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setServerDocumentRoot(document_root);
+    }
 }
 
-static bool
-wfd_MockConfigBuilder_add_auth_provider(
-    void * data,
+bool
+__wrap_wfd_config_add_auth_provider(
+    struct wfd_config * config,
     char const * provider,
     struct wfd_settings * settings)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    return builder->addAuthProvider(provider, settings);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        return __real_wfd_config_add_auth_provider(config, provider, settings);
+    }
+    else
+    {
+        return wfd_MockConfigBuilder->addAuthProvider(provider, settings);
+    }
 }
 
-static bool
-wfd_MockConfigBuilder_add_filesystem(
-    void * data,
+bool
+__wrap_wfd_config_add_filesystem(
+    struct wfd_config * config,
     char const * name,
-    char const * mountpoint)
+    char const * mount_point)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    return builder->addFilesystem(name, mountpoint);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        return __real_wfd_config_add_filesystem(config, name, mount_point);
+    }
+    else
+    {
+        return wfd_MockConfigBuilder->addFilesystem(name, mount_point);
+    }
 }
 
-static bool
-wfd_MockConfigBuilder_set_logger(
-    void * data,
+bool
+__wrap_wfd_config_set_logger(
+    struct wfd_config * config,
     char const * provider,
     int level,
     struct wfd_settings * settings)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    return builder->setLogger(provider, level, settings);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        return __real_wfd_config_set_logger(config, provider, level, settings);
+    }
+    else
+    {
+        return wfd_MockConfigBuilder->setLogger(provider, level, settings);
+    }
 }
 
-static void
-wfd_MockConfigBuilder_set_user(
-    void * data,
+void
+__wrap_wfd_config_set_user(
+    struct wfd_config * config,
     char const * user,
     char const * group)
 {
-    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
-    return builder->setUser(user, group);
+    if (nullptr == wfd_MockConfigBuilder)
+    {
+        __real_wfd_config_set_user(config, user, group);
+    }
+    else
+    {
+        wfd_MockConfigBuilder->setUser(user, group);
+    }
 }
-
-static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
-{
-    &wfd_MockConfigBuilder_set_server_vhostname,
-    &wfd_MockConfigBuilder_set_server_port,
-    &wfd_MockConfigBuilder_set_server_key,
-    &wfd_MockConfigBuilder_set_server_cert,
-    &wfd_MockConfigBuilder_set_server_document_root,
-    &wfd_MockConfigBuilder_add_auth_provider,
-    &wfd_MockConfigBuilder_add_filesystem,
-    &wfd_MockConfigBuilder_set_logger,
-    &wfd_MockConfigBuilder_set_user
-};
 
 }
 
 namespace webfused_test
 {
-    struct wfd_config_builder MockConfigBuilder::getBuilder()
-    {
-        IConfigBuilder * config_builder = this;
 
-        wfd_config_builder builder = {
-            &wfd_MockConfigBuilder_vtable,
-            reinterpret_cast<void*>(config_builder)
-        };
+MockConfigBuilder::MockConfigBuilder()
+{
+    wfd_MockConfigBuilder = this;    
+}
 
-        return builder;
-    }
+MockConfigBuilder::~MockConfigBuilder()
+{
+    wfd_MockConfigBuilder = nullptr;
+}
+
+struct wfd_config * MockConfigBuilder::getBuilder()
+{
+    IConfigBuilder * config_builder = this;
+
+    return reinterpret_cast<wfd_config *>(config_builder);
+}
 }
