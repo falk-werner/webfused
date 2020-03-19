@@ -63,6 +63,12 @@ log:
         log_pid = true
     }
 }
+
+user:
+{
+    name  = "webfused"
+    group = "webfused"
+}
 ```
 
 ### Version
@@ -153,6 +159,18 @@ This logger does not provide any settings.
 | ident       | string | webfused      | Syslog ident (see syslog documentation)    |
 | facility    | string | daemon        | Syslog facility (see syslog documentation) |
 | log_pid     | bool   | false         | Add process ID to log messages             |
+
+### User
+
+| Setting | Type   | Default value | Description                     |
+| ------- | ------ | ------------- | ------------------------------- |
+| name    | string | *-required-*  | Name of the user to switch to.  |
+| group   | string | *-required-*  | Name of the group to switch to. |
+
+Webfuse daemon will not run as root. If started as root, webfuse daemon tries to
+switch to *user* and *group* provided in config file.
+
+*Note*: user and group are not switched, when webfuse daemon is not started as root.
 
 ## Dependencies
 

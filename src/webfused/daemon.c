@@ -16,6 +16,7 @@
 #include "webfused/log/log.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/stderr_logger.h"
+#include "webfused/change_user.h"
 
 #define WFD_SERVICE_TIMEOUT (1 * 1000)
 #define WFD_DEFAULT_CONFIG_FILE ("/etc/webfuse.conf")
@@ -111,6 +112,19 @@ int wfd_daemon_run(int argc, char * argv[])
 		struct wfd_config * config = wfd_config_create();
 		struct wfd_config_builder builder = wfd_config_get_builder(config);
 		bool success = wfd_config_load_file(builder, args.config_file);
+		if (!success)
+		{
+			fprintf(stderr, "fatal: failed to load server config\n");
+			result = EXIT_FAILURE;
+		}
+
+		if (success)
+		{
+			success = wfd_change_user(
+				wfd_config_get_user(config),
+				wfd_config_get_group(config));
+		}
+
 		if (success)
 		{
 			struct wf_server_config * server_config = wfd_config_get_server_config(config);
@@ -129,11 +143,6 @@ int wfd_daemon_run(int argc, char * argv[])
 				fprintf(stderr, "fatal: unable start server\n");
 				result = EXIT_FAILURE;
 			}
-		}
-		else
-		{
-			fprintf(stderr, "fatal: failed to load server config\n");
-			result = EXIT_FAILURE;
 		}
 
 		 wfd_config_dispose(config);

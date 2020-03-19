@@ -19,6 +19,7 @@ public:
     virtual bool addAuthProvider(char const * provider, wfd_settings * settings) = 0;
     virtual bool addFilesystem(char const * name, char const * mountpoint) = 0;
     virtual bool setLogger(char const * provider, int level, wfd_settings * settings) = 0;
+    virtual void setUser(char const * user, char const * group) = 0;
 };
 
 class MockConfigBuilder: public IConfigBuilder
@@ -33,6 +34,7 @@ public:
     MOCK_METHOD2(addAuthProvider, bool (char const * provider, wfd_settings * settings));
     MOCK_METHOD2(addFilesystem, bool (char const * name, char const * mountpoint));
     MOCK_METHOD3(setLogger, bool (char const * provider, int level, wfd_settings * settings));
+    MOCK_METHOD2(setUser, void (char const * user, char const * group));
 
     struct wfd_config_builder getBuilder();
 };

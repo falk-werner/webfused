@@ -80,6 +80,15 @@ wfd_MockConfigBuilder_set_logger(
     return builder->setLogger(provider, level, settings);
 }
 
+static void
+wfd_MockConfigBuilder_set_user(
+    void * data,
+    char const * user,
+    char const * group)
+{
+    auto * builder = reinterpret_cast<IConfigBuilder*>(data);
+    return builder->setUser(user, group);
+}
 
 static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
 {
@@ -90,7 +99,8 @@ static const wfd_config_builder_vtable wfd_MockConfigBuilder_vtable =
     &wfd_MockConfigBuilder_set_server_document_root,
     &wfd_MockConfigBuilder_add_auth_provider,
     &wfd_MockConfigBuilder_add_filesystem,
-    &wfd_MockConfigBuilder_set_logger
+    &wfd_MockConfigBuilder_set_logger,
+    &wfd_MockConfigBuilder_set_user
 };
 
 }

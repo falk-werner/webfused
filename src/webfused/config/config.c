@@ -6,6 +6,7 @@
 #include "webfused/log/manager.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #define WFD_CONFIG_DEFAULT_PORT         (8080)
 #define WFD_CONFIG_DEFAULT_VHOSTNAME    ("localhost")
@@ -16,6 +17,8 @@ struct wfd_config
     bool has_authenticator;
     struct wfd_authenticator authenticator;
     struct wfd_mountpoint_factory * mountpoint_factory;
+    char * user;
+    char * group;
 };
 
 static void
@@ -112,6 +115,17 @@ wfd_config_set_logger(
     return wfd_log_manager_set_logger(provider, level, settings);
 }
 
+static void
+wfd_config_set_user(
+    void * data,
+    char const * user,
+    char const * group)
+{
+    struct wfd_config * config = data;
+    config->user = strdup(user);
+    config->group = strdup(group);
+}
+
 static const struct wfd_config_builder_vtable 
 wfd_config_vtable_config_builder =
 {
@@ -122,7 +136,8 @@ wfd_config_vtable_config_builder =
     .set_server_document_root = &wfd_config_set_server_document_root,
     .add_auth_provider = &wfd_config_add_auth_provider,
     .add_filesystem = &wfd_config_add_filesystem,
-    .set_logger = &wfd_config_set_logger
+    .set_logger = &wfd_config_set_logger,
+    .set_user = &wfd_config_set_user
 };
 
 struct wfd_config *
@@ -138,6 +153,8 @@ wfd_config_create(void)
     wf_server_config_set_mountpoint_factory(config->server,
         wfd_mountpoint_factory_create_mountpoint,
         config->mountpoint_factory);
+    config->user = NULL;
+    config->group = NULL;
 
     return config;
 }
@@ -153,6 +170,8 @@ wfd_config_dispose(
     }
     wfd_mountpoint_factory_dispose(config->mountpoint_factory);
 
+    free(config->user);
+    free(config->group);
     free(config);
 }
 
@@ -174,5 +193,19 @@ wfd_config_get_server_config(
     struct wfd_config * config)
 {
     return config->server;
+}
+
+char const *
+wfd_config_get_user(
+    struct wfd_config * config)
+{
+    return config->user;
+}
+
+char const *
+wfd_config_get_group(
+    struct wfd_config * config)
+{
+    return config->group;
 }
 

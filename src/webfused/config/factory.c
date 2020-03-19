@@ -263,6 +263,46 @@ wfd_config_read_filesystems(
 }
 
 static bool
+wfd_config_read_user(
+    config_t * config,
+    struct wfd_config_builder builder)
+{
+    bool result = true;
+    
+    bool has_user = (NULL != config_lookup(config, "user"));
+    if (has_user)
+    {
+        char const * user;
+        {
+            int rc = config_lookup_string(config, "user.name", &user);
+            if (CONFIG_TRUE != rc)
+            {
+                WFD_ERROR("failed to load config: missing required user propert: \'name\'");
+                result = false;
+            }
+        }
+
+        char const * group;
+        if (result)
+        {
+            int rc = config_lookup_string(config, "user.group", &group);
+            if (CONFIG_TRUE != rc)
+            {
+                WFD_ERROR("failed to load config: missing required user propert: \'group\'");
+                result = false;
+            }
+        }
+
+        if (result)
+        {
+            wfd_config_builder_set_user(builder, user, group);
+        }
+    }
+
+    return result;
+}
+
+static bool
 wfd_config_load(
     struct wfd_config_builder builder,
     config_t * config)
@@ -273,6 +313,7 @@ wfd_config_load(
         && wfd_config_read_server(config, builder)
         && wfd_config_read_authentication(config, builder)
         && wfd_config_read_filesystems(config, builder)
+        && wfd_config_read_user(config, builder)
         ;
 
     return result;

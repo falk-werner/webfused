@@ -68,5 +68,14 @@ wfd_config_builder_set_logger(
     return builder.vtable->set_logger(builder.data, provider, level, settings);
 }
 
+void
+wfd_config_builder_set_user(
+    struct wfd_config_builder builder,
+    char const * user,
+    char const * group)
+{
+    return builder.vtable->set_user(builder.data, user, group);
+}
+
 
 
