@@ -1,5 +1,6 @@
 #include "webfused/auth/factory.h"
 #include "webfused/auth/file_authenticator.h"
+#include "webfused/auth/pam_authenticator.h"
 #include "webfused/config/settings.h"
 #include "webfused/log/log.h"
 
@@ -15,6 +16,10 @@ wfd_authenticator_create(
     if (0 == strcmp("file", provider))
     {
         result = wfd_file_authenticator_create(settings, authenticator);
+    }
+    else if (0 == strcmp("pam", provider))
+    {
+        result = wfd_pam_authenticator_create(settings, authenticator);
     }
     else
     {

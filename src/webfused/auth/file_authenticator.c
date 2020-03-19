@@ -61,7 +61,7 @@ wfd_file_authenticator_get_type(
     return "username";  
 }
 
-static struct wfd_authenticator_vtable
+static struct wfd_authenticator_vtable const
 wfd_file_authenticator_vtable =
 {
     .dispose = &wfd_file_authenticator_dispose,

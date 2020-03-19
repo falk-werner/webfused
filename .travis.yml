@@ -25,6 +25,7 @@ addons:
             - python3-wheel
             - ninja-build
             - libconfig-dev
+            - libpam0g-dev
             - valgrind
 
 env:

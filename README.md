@@ -39,10 +39,10 @@ server:
 authentication:
 (
     {
-        provider = "file"
+        provider = "pam"
         settings:
         {
-            file = "/etc/webfused/passwd"
+            service_name = "webfused"
         }
     }
 )
@@ -104,9 +104,10 @@ Otherwise, plain websockes without TLS are used.
 | provider | string | *-required-*  | Name of the authentication provider (see below) |
 | settings | object | *-empty-*     | Provider specific settings (see below)
 
-Currently, only one provider is specified:
+Currently, the following providers are supported:
 
 - *file*: file based authentication
+- *pam*: authentication based on Linux PAM
 
 ### File Authenticaton Provider
 
@@ -114,7 +115,15 @@ Allows authentication against a file containing username and password.
 
 | Setting  | Type   | Default value | Description                     |
 | -------- | ------ | ------------- | ------------------------------- |
-| file     | string | *-empty-*     | Path to the authentication file |
+| file     | string | *-required-*  | Path to the authentication file |
+
+### PAM Authenticaton Provider
+
+Allows authentication using Linux PAM.
+
+| Setting      | Type   | Default value | Description            |
+| ------------ | ------ | ------------- | ---------------------- |
+| service_name | string | webfused      | PAM service identifier |
 
 ### Filesystems
 
@@ -180,6 +189,7 @@ switch to *user* and *group* provided in config file.
   - [jansson](https://github.com/akheron/jansson)
 - [openssl](https://www.openssl.org/)
 - [libconfig](https://hyperrealm.github.io/libconfig/)
+- [linux-pam](http://www.linux-pam.org/)
 - [Google Test](https://github.com/google/googletest) *(Test only)*
 
 ### Installing dependencies
@@ -239,6 +249,11 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
 
     sudo apt update
     sudo apt install libconfig-dev
+
+#### linux-pam
+
+    sudo apt update
+    sudo apt install libpam0g-dev
 
 #### GoogleTest
 

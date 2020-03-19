@@ -3,6 +3,8 @@ project(webfused VERSION 0.1.0 DESCRIPTION "Webfuse daemon")
 
 option(WITHOUT_TESTS   "disable unit tests"   OFF)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -14,6 +16,7 @@ pkg_check_modules(UUID REQUIRED uuid)
 pkg_check_modules(LIBCONFIG REQUIRED libconfig)
 pkg_check_modules(OPENSSL REQUIRED openssl)
 pkg_check_modules(WEBFUSE REQUIRED libwebfuse-adapter)
+find_package(Pam REQUIRED)
 
 add_definitions(-D_FILE_OFFSET_BITS=64)
 
@@ -33,7 +36,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(C_WARNINGS -Wall -Wextra)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(coverage)
 
 add_library(userdb STATIC 
@@ -58,6 +60,7 @@ add_library(webfused-static STATIC
 	src/webfused/auth/authenticator.c
 	src/webfused/auth/factory.c
 	src/webfused/auth/file_authenticator.c
+	src/webfused/auth/pam_authenticator.c
 	src/webfused/log/log.c
 	src/webfused/log/logger.c
 	src/webfused/log/manager.c
@@ -76,6 +79,7 @@ target_link_libraries(webfused PUBLIC
     ${OPENSSL_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
+	${PAM_LIBRARIES}
 )
 
 target_compile_options(webfused PUBLIC ${OPENSSL_CFLAGS_OTHER})
@@ -119,11 +123,13 @@ add_executable(alltests
 	test/mock_logger.cc
 	test/mock_credentials.cc
 	test/mock_settings.cc
+	test/mock_pam.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_settings.cc
 	test/test_auth_factory.cc
 	test/test_file_authenticator.cc
+	test/test_pam_authenticator.cc
 	test/test_mountpoint_factory.cc
 	test/test_log.cc
 	test/test_log_manager.cc
@@ -160,11 +166,18 @@ target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wfd_config_set_logger
 	-Wl,--wrap=wfd_config_set_user
 
+	-Wl,--wrap=pam_start
+	-Wl,--wrap=pam_end
+	-Wl,--wrap=pam_strerror
+	-Wl,--wrap=pam_authenticate
+	-Wl,--wrap=pam_acct_mgmt
+
 	webfused-static
 	userdb
 	${LIBCONFIG_LIBRARIES}
     ${WEBFUSE_LIBRARIES}
     ${UUID_LIBRARIES}
+	${PAM_LIBRARIES}
 	${OPENSSL_LIBRARIES}
 	${GMOCK_LIBRARIES}
 	${GTEST_LIBRARIES}
