@@ -1,4 +1,6 @@
 #include "webfused/config/factory.h"
+#include "webfused/config/config_intern.h"
+#include "webfused/config/config.h"
 #include "webfused/config/settings_intern.h"
 #include "webfused/log/log.h"
 
@@ -58,7 +60,7 @@ wfd_config_check_version(
 static bool
 wfd_config_read_logger(
     config_t * config,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     bool result = true;
 
@@ -100,7 +102,7 @@ wfd_config_read_logger(
             config_setting_t * setting = config_lookup(config, "log.settings");
             struct wfd_settings settings;
             wfd_settings_init(&settings, setting);
-            result = wfd_config_builder_set_logger(builder, provider, level, &settings);
+            result = wfd_config_set_logger(builder, provider, level, &settings);
             wfd_settings_cleanup(&settings);
         }
     }
@@ -111,41 +113,41 @@ wfd_config_read_logger(
 static bool
 wfd_config_read_server(
     config_t * config,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     char const * vhost_name;
     int rc = config_lookup_string(config, "server.vhost_name", &vhost_name);
     if (CONFIG_TRUE == rc)
     {
-        wfd_config_builder_set_server_vhostname(builder, vhost_name);
+        wfd_config_set_server_vhostname(builder, vhost_name);
     }
 
     int port;
     rc = config_lookup_int(config, "server.port", &port);
     if (CONFIG_TRUE == rc)
     {
-        wfd_config_builder_set_server_port(builder, port);
+        wfd_config_set_server_port(builder, port);
     }
 
     char const * cert;
     rc = config_lookup_string(config, "server.tls.certificate", &cert);
     if (CONFIG_TRUE == rc)
     {
-        wfd_config_builder_set_server_cert(builder, cert);
+        wfd_config_set_server_cert(builder, cert);
     }
 
     char const * key;
     rc = config_lookup_string(config, "server.tls.key", &key);
     if (CONFIG_TRUE == rc)
     {
-        wfd_config_builder_set_server_key(builder, key);
+        wfd_config_set_server_key(builder, key);
     }
 
     char const * doc_root;
     rc = config_lookup_string(config, "server.document_root", &doc_root);
     if (CONFIG_TRUE == rc)
     {
-        wfd_config_builder_set_server_document_root(builder, doc_root);
+        wfd_config_set_server_document_root(builder, doc_root);
     }
 
     return true;
@@ -154,7 +156,7 @@ wfd_config_read_server(
 static bool
 wfd_config_read_authenticator(
     config_setting_t * authenticator,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     bool result = (NULL != authenticator);
 
@@ -185,7 +187,7 @@ wfd_config_read_authenticator(
         struct wfd_settings auth_settings;
         wfd_settings_init(&auth_settings, settings);
 
-        result = wfd_config_builder_add_auth_provider(builder, provider_name, &auth_settings);
+        result = wfd_config_add_auth_provider(builder, provider_name, &auth_settings);
         wfd_settings_cleanup(&auth_settings);
     }
 
@@ -195,7 +197,7 @@ wfd_config_read_authenticator(
 static bool
 wfd_config_read_authentication(
     config_t * config,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     bool result = true;
 
@@ -216,7 +218,7 @@ wfd_config_read_authentication(
 static bool
 wfd_config_read_filesystems(
     config_t * config,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     bool result = true;
     config_setting_t * filesystems = config_lookup(config, "filesystems");
@@ -251,7 +253,7 @@ wfd_config_read_filesystems(
                 break;
             }
 
-            result = wfd_config_builder_add_filesystem(builder, name, mount_point);
+            result = wfd_config_add_filesystem(builder, name, mount_point);
             if (!result)
             {
                 break;
@@ -265,7 +267,7 @@ wfd_config_read_filesystems(
 static bool
 wfd_config_read_user(
     config_t * config,
-    struct wfd_config_builder builder)
+    struct wfd_config * builder)
 {
     bool result = true;
     
@@ -295,43 +297,48 @@ wfd_config_read_user(
 
         if (result)
         {
-            wfd_config_builder_set_user(builder, user, group);
+            wfd_config_set_user(builder, user, group);
         }
     }
 
     return result;
 }
 
-static bool
+static struct wfd_config *
 wfd_config_load(
-    struct wfd_config_builder builder,
     config_t * config)
 {
+    struct wfd_config * result = wfd_config_create();
 
-    bool result = wfd_config_check_version(config)
-        && wfd_config_read_logger(config, builder)
-        && wfd_config_read_server(config, builder)
-        && wfd_config_read_authentication(config, builder)
-        && wfd_config_read_filesystems(config, builder)
-        && wfd_config_read_user(config, builder)
+    bool success = wfd_config_check_version(config)
+        && wfd_config_read_logger(config, result)
+        && wfd_config_read_server(config, result)
+        && wfd_config_read_authentication(config, result)
+        && wfd_config_read_filesystems(config, result)
+        && wfd_config_read_user(config, result)
         ;
+    
+    if (!success)
+    {
+        wfd_config_dispose(result);
+        result = NULL;
+    }
 
     return result;
 }
 
-bool
+struct wfd_config *
 wfd_config_load_file(
-    struct wfd_config_builder builder,
     char const * filename)
 {
-    bool result = false;
+    struct wfd_config * result = NULL;
 
     config_t config;
     config_init(&config);
     int rc = config_read_file(&config, filename);
     if (CONFIG_TRUE == rc)
     {
-        result = wfd_config_load(builder, &config);
+        result = wfd_config_load(&config);
     }
     else
     {
@@ -346,19 +353,18 @@ wfd_config_load_file(
     return result;
 }
 
-bool
+struct wfd_config *
 wfd_config_load_string(
-    struct wfd_config_builder builder,
     char const * contents)
 {
-    bool result = false;
+    struct wfd_config * result = NULL;
 
     config_t config;
     config_init(&config);
     int rc = config_read_string(&config, contents);
     if (CONFIG_TRUE == rc)
     {
-        result = wfd_config_load(builder, &config);
+        result = wfd_config_load(&config);
     }
     else
     {

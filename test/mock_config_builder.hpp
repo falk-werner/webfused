@@ -2,7 +2,7 @@
 #define WFD_MOCK_CONFIG_BUILDER_HPP
 
 #include <gmock/gmock.h>
-#include "webfused/config/builder.h"
+#include "webfused/config/config_intern.h"
 
 namespace webfused_test
 {
@@ -11,6 +11,8 @@ class IConfigBuilder
 {
 public:
     virtual ~IConfigBuilder() = default;
+    virtual wfd_config * create(void) = 0;
+    virtual void dispose(wfd_config * config) = 0;
     virtual void setServerVhostname(char const * vhostname) = 0;
     virtual void setServerPort(int port) = 0;
     virtual void setServerKey(char const * key_path) = 0;
@@ -25,7 +27,10 @@ public:
 class MockConfigBuilder: public IConfigBuilder
 {
 public:
-    ~MockConfigBuilder() override = default;
+    MockConfigBuilder();
+    ~MockConfigBuilder() override;
+    MOCK_METHOD0(create, wfd_config * (void));
+    MOCK_METHOD1(dispose, void (wfd_config * config));
     MOCK_METHOD1(setServerVhostname, void (char const * vhostname));
     MOCK_METHOD1(setServerPort, void (int port));
     MOCK_METHOD1(setServerKey, void (char const * key_path));
@@ -36,7 +41,7 @@ public:
     MOCK_METHOD3(setLogger, bool (char const * provider, int level, wfd_settings * settings));
     MOCK_METHOD2(setUser, void (char const * user, char const * group));
 
-    struct wfd_config_builder getBuilder();
+    struct wfd_config * getBuilder();
 };
 
 }

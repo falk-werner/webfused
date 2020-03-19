@@ -109,9 +109,9 @@ int wfd_daemon_run(int argc, char * argv[])
 	{
 		signal(SIGINT, on_interrupt);
 
-		struct wfd_config * config = wfd_config_create();
-		struct wfd_config_builder builder = wfd_config_get_builder(config);
-		bool success = wfd_config_load_file(builder, args.config_file);
+		struct wfd_config * config = wfd_config_load_file(args.config_file);
+		bool success = (NULL != config);
+
 		if (!success)
 		{
 			fprintf(stderr, "fatal: failed to load server config\n");
@@ -145,7 +145,10 @@ int wfd_daemon_run(int argc, char * argv[])
 			}
 		}
 
-		 wfd_config_dispose(config);
+		if (NULL != config)
+		{
+			wfd_config_dispose(config);
+		}
 	}
 	else
 	{

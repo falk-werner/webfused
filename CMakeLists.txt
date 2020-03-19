@@ -54,7 +54,6 @@ add_library(webfused-static STATIC
 	src/webfused/change_user.c
 	src/webfused/config/config.c
 	src/webfused/config/factory.c
-	src/webfused/config/builder.c
 	src/webfused/config/settings.c
 	src/webfused/auth/authenticator.c
 	src/webfused/auth/factory.c
@@ -144,9 +143,23 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
+
 	-Wl,--wrap=wfd_settings_get_string
 	-Wl,--wrap=wfd_settings_get_string_or_default
 	-Wl,--wrap=wfd_settings_get_bool
+
+	-Wl,--wrap=wfd_config_create
+	-Wl,--wrap=wfd_config_dispose
+	-Wl,--wrap=wfd_config_set_server_vhostname
+	-Wl,--wrap=wfd_config_set_server_port
+	-Wl,--wrap=wfd_config_set_server_key
+	-Wl,--wrap=wfd_config_set_server_cert
+	-Wl,--wrap=wfd_config_set_server_document_root
+	-Wl,--wrap=wfd_config_add_auth_provider
+	-Wl,--wrap=wfd_config_add_filesystem
+	-Wl,--wrap=wfd_config_set_logger
+	-Wl,--wrap=wfd_config_set_user
+
 	webfused-static
 	userdb
 	${LIBCONFIG_LIBRARIES}
