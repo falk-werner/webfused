@@ -103,3 +103,17 @@ TEST(config, set_logger)
 
     wfd_config_dispose(config);
 }
+
+TEST(config, do_set_user)
+{
+    wfd_config * config = wfd_config_create();
+    ASSERT_NE(nullptr, config);
+
+    wfd_config_builder builder = wfd_config_get_builder(config);
+
+    wfd_config_builder_set_user(builder, "some.user", "some.group");
+    ASSERT_STREQ("some.user", wfd_config_get_user(config));
+    ASSERT_STREQ("some.group", wfd_config_get_group(config));
+
+    wfd_config_dispose(config);
+}

@@ -51,6 +51,7 @@ target_compile_options(userdb PUBLIC ${OPENSSL_CFLAGS_OTHER})
 add_library(webfused-static STATIC
 	src/webfused/daemon.c
 	src/webfused/mountpoint_factory.c
+	src/webfused/change_user.c
 	src/webfused/config/config.c
 	src/webfused/config/factory.c
 	src/webfused/config/builder.c

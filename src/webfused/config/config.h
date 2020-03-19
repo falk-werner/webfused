@@ -33,6 +33,14 @@ extern struct wf_server_config *
 wfd_config_get_server_config(
     struct wfd_config * config);
 
+extern char const *
+wfd_config_get_user(
+    struct wfd_config * config);
+
+extern char const *
+wfd_config_get_group(
+    struct wfd_config * config);
+
 #ifdef __cplusplus
 }
 #endif

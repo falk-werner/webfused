@@ -546,3 +546,63 @@ TEST(config, log_fail_invalid_level)
     ASSERT_FALSE(result);
 }
 
+TEST(config, set_user)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setUser(_, _)).Times(1);   
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "user:\n"
+        "{\n"
+        "  name  = \"webfused\"\n"
+        "  group = \"webfused\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_TRUE(result);
+}
+
+TEST(config, set_user_fail_missing_name)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setUser(_, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "user:\n"
+        "{\n"
+        "  group = \"webfused\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
+
+TEST(config, set_user_fail_missing_group)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, setUser(_, _)).Times(0);
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "user:\n"
+        "{\n"
+        "  name = \"webfused\"\n"
+        "}\n"
+        ;
+    bool result = wfd_config_load_string(builder.getBuilder(), config_text);
+    ASSERT_FALSE(result);
+}
