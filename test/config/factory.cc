@@ -18,12 +18,12 @@ using ::webfused_test::MockLibConfig;
 TEST(config, is_loadable)
 {
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setLogger(_,_,_)).Times(1).WillOnce(Return(true));
-    EXPECT_CALL(builder, setServerVhostname(StrEq("localhost"))).Times(1);
-    EXPECT_CALL(builder, setServerPort(8080)).Times(1);
-    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(true));
-    EXPECT_CALL(builder, addFilesystem(_,_)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_logger(_,_,_,_)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(builder, wfd_config_set_server_vhostname(_,StrEq("localhost"))).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_server_port(_,8080)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_auth_provider(_,_, _)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_)).Times(1).WillOnce(Return(true));
 
     struct wfd_config * config = wfd_config_load_file("webfused.conf");
     ASSERT_NE(nullptr, config);
@@ -36,7 +36,7 @@ TEST(config, minimal_config)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
 
     char const minimal[] = "version = { major = 1, minor = 0 }\n";
     struct wfd_config * config = wfd_config_load_string(minimal);
@@ -50,8 +50,8 @@ TEST(config, invalid_config)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(0);
-    EXPECT_CALL(builder, dispose(_)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(0);
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(0);
 
     char const syntax_error[] = "version.major = 1\n";
 
@@ -66,8 +66,8 @@ TEST(config, invalid_config_file)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(0);
-    EXPECT_CALL(builder, dispose(_)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(0);
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(0);
 
     struct wfd_config * config = wfd_config_load_file("invalid.conf");
     ASSERT_EQ(nullptr, config);
@@ -80,8 +80,8 @@ TEST(config, invalid_major_version_too_low)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const too_low[] = "version = { major = 0, minor = 0 }\n";
 
@@ -96,8 +96,8 @@ TEST(config, invalid_major_version_too_high)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const too_high[] = "version = { major = 2, minor = 0 }\n";
 
@@ -112,8 +112,8 @@ TEST(config, invalid_missing_major_version)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const too_high[] = "version = { minor = 0 }\n";
 
@@ -128,8 +128,8 @@ TEST(config, invalid_missing_minor_version)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const too_high[] = "version = { major = 1 }\n";
 
@@ -144,7 +144,7 @@ TEST(config, valid_older_minor)
     EXPECT_CALL(logger, onclose()).Times(1);
     
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
 
     char const valid[] = "version = { major = 1, minor = -1 }\n";
 
@@ -159,7 +159,7 @@ TEST(config, valid_newer_minor)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
 
     char const valid[] = "version = { major = 1, minor = 1 }\n";
 
@@ -174,8 +174,8 @@ TEST(config, vhost_name)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setServerVhostname(StrEq("some.host"))).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_server_vhostname(_,StrEq("some.host"))).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -195,8 +195,8 @@ TEST(config, port)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setServerPort(54321)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_server_port(_,54321)).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -216,8 +216,8 @@ TEST(config, tls_certificate)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;    
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setServerCert(StrEq("/path/to/cert.pem"))).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_server_cert(_, StrEq("/path/to/cert.pem"))).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -240,8 +240,8 @@ TEST(config, tls_key)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;    
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setServerKey(StrEq("/path/to/key.pem"))).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_server_key(_,StrEq("/path/to/key.pem"))).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -264,8 +264,8 @@ TEST(config, document_root)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setServerDocumentRoot(StrEq("/var/www"))).Times(1);    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_server_document_root(_,StrEq("/var/www"))).Times(1);    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -285,8 +285,8 @@ TEST(config, authentication)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(true));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_add_auth_provider(_,_, _)).Times(1).WillOnce(Return(true));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -309,9 +309,9 @@ TEST(config, failed_create_authenticator)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, addAuthProvider(_, _)).Times(1).WillOnce(Return(false));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_auth_provider(_,_, _)).Times(1).WillOnce(Return(false));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -334,8 +334,8 @@ TEST(config, failed_missing_auth_provider)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -357,8 +357,8 @@ TEST(config, failed_missing_auth_settings)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -380,8 +380,8 @@ TEST(config, failed_auth_settings_get_elem)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
 
     MockLibConfig libconfig;
     EXPECT_CALL(libconfig, config_setting_get_elem(_,_)).Times(1).WillOnce(Return(nullptr));
@@ -407,8 +407,8 @@ TEST(config, filesystems)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(1).WillOnce(Return(true));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(1).WillOnce(Return(true));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -428,8 +428,8 @@ TEST(config, filesystems_empty)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -448,9 +448,9 @@ TEST(config, filesystems_failed_add)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(1).WillOnce(Return(false));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(1).WillOnce(Return(false));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -470,9 +470,9 @@ TEST(config, filesystems_failed_missing_name)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -492,9 +492,9 @@ TEST(config, filesystems_failed_missing_mountpoint)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -514,9 +514,9 @@ TEST(config, filesystems_failed_missing_elem)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
 
     MockLibConfig libconfig;
     EXPECT_CALL(libconfig, config_setting_get_elem(_,_)).Times(1).WillOnce(Return(nullptr));
@@ -539,8 +539,8 @@ TEST(config, log)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setLogger(_, _, _)).Times(1).WillOnce(Return(true));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_logger(_,_, _, _)).Times(1).WillOnce(Return(true));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -561,9 +561,9 @@ TEST(config, log_fail_set_logger)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setLogger(_, _, _)).Times(1).WillOnce(Return(false));    
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_logger(_,_, _, _)).Times(1).WillOnce(Return(false));    
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -584,9 +584,9 @@ TEST(config, log_fail_missing_provider)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_logger(_,_, _, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -606,9 +606,9 @@ TEST(config, log_fail_missing_level)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_logger(_,_, _, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -629,9 +629,9 @@ TEST(config, log_fail_invalid_level)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setLogger(_, _, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_logger(_, _, _, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -651,8 +651,8 @@ TEST(config, set_user)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, setUser(_, _)).Times(1);   
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(1);   
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -673,9 +673,9 @@ TEST(config, set_user_fail_missing_name)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setUser(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
@@ -695,9 +695,9 @@ TEST(config, set_user_fail_missing_group)
     EXPECT_CALL(logger, onclose()).Times(1);
 
     StrictMock<MockConfigBuilder> builder;
-    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, dispose(_)).Times(1);
-    EXPECT_CALL(builder, setUser(_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(0);
 
     char const config_text[] = 
         "version = { major = 1, minor = 0 }\n"
