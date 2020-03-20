@@ -126,6 +126,7 @@ add_executable(alltests
 	test/mock_pam.cc
 	test/mock_libconfig.cc
 	test/mock_linux.cc
+	test/mock_server.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_settings.cc
@@ -152,6 +153,8 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
+
+	-Wl,--wrap=wf_server_create
 
 	-Wl,--wrap=wfd_settings_get_string
 	-Wl,--wrap=wfd_settings_get_string_or_default
