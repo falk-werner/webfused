@@ -19,7 +19,7 @@
 #include "webfused/change_user.h"
 
 #define WFD_SERVICE_TIMEOUT (1 * 1000)
-#define WFD_DEFAULT_CONFIG_FILE ("/etc/webfuse.conf")
+#define WFD_DEFAULT_CONFIG_FILE ("/etc/webfused.conf")
 
 struct args
 {
