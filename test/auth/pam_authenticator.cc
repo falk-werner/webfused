@@ -51,10 +51,10 @@ TEST(pam_authenticator, get_type)
 TEST(pam_authenticator, authenticate)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     wfd_authenticator authenticator;
     bool success = wfd_pam_authenticator_create(nullptr, &authenticator);
@@ -73,10 +73,10 @@ TEST(pam_authenticator, authenticate)
 TEST(pam_authenticator, authenticate_with_custom_service_name)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("brummni"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_start(StrEq("brummni"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     MockSettings settings;
     EXPECT_CALL(settings, getStringOrDefault(StrEq("service_name"), StrEq("webfused")))
@@ -133,11 +133,11 @@ int valid_conversation(
 TEST(pam_authenticator, conversation_with_valid_messages)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("webfused"), nullptr, _, _))
+    EXPECT_CALL(pam, pam_start(StrEq("webfused"), nullptr, _, _))
         .Times(1).WillOnce(Invoke(&valid_conversation));
-    EXPECT_CALL(pam, authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     wfd_authenticator authenticator;
     bool success = wfd_pam_authenticator_create(nullptr, &authenticator);
@@ -182,7 +182,7 @@ int invalid_conversation(
 TEST(pam_authenticator, conversation_with_invalid_messages)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("webfused"), nullptr, _, _))
+    EXPECT_CALL(pam, pam_start(StrEq("webfused"), nullptr, _, _))
         .Times(1).WillOnce(Invoke(&invalid_conversation));
 
     wfd_authenticator authenticator;
@@ -202,9 +202,9 @@ TEST(pam_authenticator, conversation_with_invalid_messages)
 TEST(pam_authenticator, authenticate_fail_authenticate)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(-1));
-    EXPECT_CALL(pam, end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(-1));
+    EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     wfd_authenticator authenticator;
     bool success = wfd_pam_authenticator_create(nullptr, &authenticator);
@@ -223,10 +223,10 @@ TEST(pam_authenticator, authenticate_fail_authenticate)
 TEST(pam_authenticator, authenticate_fail_acct_mgmt)
 {
     MockPam pam;
-    EXPECT_CALL(pam, start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
-    EXPECT_CALL(pam, acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(-1));
-    EXPECT_CALL(pam, end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_start(StrEq("webfused"), nullptr, _, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_authenticate(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(PAM_SUCCESS));
+    EXPECT_CALL(pam, pam_acct_mgmt(_, PAM_DISALLOW_NULL_AUTHTOK)).Times(1).WillOnce(Return(-1));
+    EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     wfd_authenticator authenticator;
     bool success = wfd_pam_authenticator_create(nullptr, &authenticator);
