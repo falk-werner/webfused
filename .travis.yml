@@ -41,9 +41,9 @@ before_install:
     - cd .deps
     # libfuse
     - sudo pip3 install --system meson
-    - wget https://github.com/libfuse/libfuse/archive/fuse-3.9.0.tar.gz -O fuse.tar.gz
+    - wget https://github.com/libfuse/libfuse/archive/fuse-3.9.1.tar.gz -O fuse.tar.gz
     - tar -xf fuse.tar.gz
-    - cd libfuse-fuse-3.9.0
+    - cd libfuse-fuse-3.9.1
     - mkdir .build
     - cd .build
     - meson ..
