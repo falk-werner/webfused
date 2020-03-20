@@ -120,6 +120,8 @@ int valid_conversation(
     int rc = conv->conv(2, messages, &responses, conv->appdata_ptr);
     if (PAM_SUCCESS == rc)
     {
+        free(responses[0].resp);
+        free(responses[1].resp);
         free(responses);
     }
 
