@@ -127,7 +127,13 @@ add_executable(alltests
 	test/mock/libconfig.cc
 	test/mock/linux.cc
 	test/mock/server.cc
-    test/config/factory.cc
+    test/config/configfile.cc
+    test/config/configfile_version.cc
+    test/config/configfile_server.cc
+    test/config/configfile_auth.cc
+    test/config/configfile_filesystem.cc
+    test/config/configfile_log.cc
+    test/config/configfile_user.cc
 	test/config/config.cc
 	test/config/settings.cc
 	test/auth/factory.cc
