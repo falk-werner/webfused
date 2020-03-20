@@ -11,8 +11,8 @@ class ICredentials
 {
 public:
     virtual ~ICredentials() = default;
-    virtual char const * type() = 0;
-    virtual char const * get(char const * key) = 0;   
+    virtual char const * wf_credentials_type(struct wf_credentials const * credentials) = 0;
+    virtual char const * wf_credentials_get(struct wf_credentials const * credentials, char const * key) = 0;   
 };
 
 class MockCredentials: public ICredentials
@@ -20,8 +20,8 @@ class MockCredentials: public ICredentials
 public:
     MockCredentials();
     virtual ~MockCredentials();
-    MOCK_METHOD0(type, char const*());
-    MOCK_METHOD1(get, char const *(char const * key));
+    MOCK_METHOD1(wf_credentials_type, char const*(struct wf_credentials const * credentials));
+    MOCK_METHOD2(wf_credentials_get, char const *(struct wf_credentials const * credentials, char const * key));
 };
 
 }

@@ -61,8 +61,8 @@ TEST(pam_authenticator, authenticate)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_TRUE(is_authenticated);
@@ -87,8 +87,8 @@ TEST(pam_authenticator, authenticate_with_custom_service_name)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_TRUE(is_authenticated);
@@ -144,8 +144,8 @@ TEST(pam_authenticator, conversation_with_valid_messages)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_TRUE(is_authenticated);
@@ -190,8 +190,8 @@ TEST(pam_authenticator, conversation_with_invalid_messages)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
@@ -211,8 +211,8 @@ TEST(pam_authenticator, authenticate_fail_authenticate)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
@@ -233,8 +233,8 @@ TEST(pam_authenticator, authenticate_fail_acct_mgmt)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
@@ -251,8 +251,8 @@ TEST(pam_authenticator, authenticate_fail_missing_username)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return(nullptr));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return("secret"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return(nullptr));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return("secret"));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
@@ -269,8 +269,8 @@ TEST(pam_authenticator, authenticate_fail_missing_password)
     ASSERT_TRUE(success);
 
     MockCredentials creds;
-    EXPECT_CALL(creds, get(StrEq("username"))).Times(1).WillOnce(Return("bob"));
-    EXPECT_CALL(creds, get(StrEq("password"))).Times(1).WillOnce(Return(nullptr));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("username"))).Times(1).WillOnce(Return("bob"));
+    EXPECT_CALL(creds, wf_credentials_get(_,StrEq("password"))).Times(1).WillOnce(Return(nullptr));
 
     bool is_authenticated = wfd_authenticator_authenticate(authenticator, nullptr);
     ASSERT_FALSE(is_authenticated);
