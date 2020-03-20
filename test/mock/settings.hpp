@@ -11,9 +11,9 @@ class ISettings
 {
 public:
     virtual ~ISettings() = default;
-    virtual char const * getString(char const * key) = 0;
-    virtual char const * getStringOrDefault(char const * key, char const * default_value) = 0;
-    virtual bool getBool(char const * key) = 0;
+    virtual char const * wfd_settings_get_string(wfd_settings * settings, char const * key) = 0;
+    virtual char const * wfd_settings_get_string_or_default(wfd_settings * settings, char const * key, char const * default_value) = 0;
+    virtual bool wfd_settings_get_bool(wfd_settings * settings, char const * key) = 0;
 };
 
 class MockSettings: public ISettings
@@ -21,9 +21,9 @@ class MockSettings: public ISettings
 public:
     MockSettings();
     ~MockSettings() override;
-    MOCK_METHOD1(getString, char const * (char const * key));
-    MOCK_METHOD2(getStringOrDefault, char const * (char const * key, char const * default_value));
-    MOCK_METHOD1(getBool, bool (char const * key));
+    MOCK_METHOD2(wfd_settings_get_string, char const * (wfd_settings * settings, char const * key));
+    MOCK_METHOD3(wfd_settings_get_string_or_default, char const * (wfd_settings * settings, char const * key, char const * default_value));
+    MOCK_METHOD2(wfd_settings_get_bool, bool (wfd_settings * settings, char const * key));
 };
 
 }

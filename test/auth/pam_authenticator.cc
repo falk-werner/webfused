@@ -79,7 +79,7 @@ TEST(pam_authenticator, authenticate_with_custom_service_name)
     EXPECT_CALL(pam, pam_end(_, _)).Times(1).WillOnce(Return(PAM_SUCCESS));
 
     MockSettings settings;
-    EXPECT_CALL(settings, getStringOrDefault(StrEq("service_name"), StrEq("webfused")))
+    EXPECT_CALL(settings, wfd_settings_get_string_or_default(_,StrEq("service_name"), StrEq("webfused")))
         .Times(1).WillOnce(Return("brummni"));
 
     wfd_authenticator authenticator;
