@@ -197,7 +197,7 @@ add_custom_target(check
 add_dependencies(check alltests)
 
 add_custom_target(memcheck
-    valgrind ./alltests)
+    valgrind --leak-check=full --error-exitcode=1 ./alltests)
 add_dependencies(memcheck alltests)
 
 add_custom_target(coverage
