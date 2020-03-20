@@ -1,2 +1,4 @@
 ignore:
-    - "test/**/*"
+    - "test"
+    - "src/passwd"
+    - "src/webfused/main.c"
