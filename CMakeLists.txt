@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10)
-project(webfused VERSION 0.2.0 DESCRIPTION "Webfuse daemon")
+project(webfused VERSION 0.3.0 DESCRIPTION "Webfuse daemon")
 
 option(WITHOUT_TESTS   "disable unit tests"   OFF)
 
