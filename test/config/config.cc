@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 #include "webfused/config/config.h"
 #include "webfused/config/config_intern.h"
-#include "mock_settings.hpp"
+#include "mock/settings.hpp"
 
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
-#include "mock_logger.hpp"
+#include "mock/logger.hpp"
 using ::webfused_test::MockLogger;
 using ::testing::_;
 
@@ -36,7 +36,7 @@ TEST(config, auth_config)
     ASSERT_NE(nullptr, config);
 
     MockSettings settings;
-    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+    EXPECT_CALL(settings, wfd_settings_get_string(_,StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
     bool success = wfd_config_add_auth_provider(config, "file", nullptr);
     ASSERT_TRUE(success);
@@ -50,7 +50,7 @@ TEST(config, auth_config_failed_to_add_second_provider)
     ASSERT_NE(nullptr, config);
 
     MockSettings settings;
-    EXPECT_CALL(settings, getString(StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
+    EXPECT_CALL(settings, wfd_settings_get_string(_,StrEq("file"))).Times(1).WillOnce(Return("/any/path"));
 
     bool success = wfd_config_add_auth_provider(config, "file", nullptr);
     ASSERT_TRUE(success);

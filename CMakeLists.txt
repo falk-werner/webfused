@@ -119,27 +119,39 @@ include(GoogleTest)
 pkg_check_modules(GMOCK gmock)
 
 add_executable(alltests
-	test/mock_config_builder.cc
-	test/mock_logger.cc
-	test/mock_credentials.cc
-	test/mock_settings.cc
-	test/mock_pam.cc
-    test/test_config_factory.cc
-	test/test_config.cc
-	test/test_settings.cc
-	test/test_auth_factory.cc
-	test/test_file_authenticator.cc
-	test/test_pam_authenticator.cc
-	test/test_mountpoint_factory.cc
-	test/test_log.cc
-	test/test_log_manager.cc
-	test/test_stderr_logger.cc
-	test/test_syslog_logger.cc
-	test/test_daemon.cc
+	test/mock/config_builder.cc
+	test/mock/logger.cc
+	test/mock/credentials.cc
+	test/mock/settings.cc
+	test/mock/pam.cc
+	test/mock/libconfig.cc
+	test/mock/linux.cc
+	test/mock/server.cc
+    test/config/configfile.cc
+    test/config/configfile_version.cc
+    test/config/configfile_server.cc
+    test/config/configfile_auth.cc
+    test/config/configfile_filesystem.cc
+    test/config/configfile_log.cc
+    test/config/configfile_user.cc
+	test/config/config.cc
+	test/config/settings.cc
+	test/auth/factory.cc
+	test/auth/file_authenticator.cc
+	test/auth/pam_authenticator.cc
+	test/log/log.cc
+	test/log/log_manager.cc
+	test/log/stderr_logger.cc
+	test/log/syslog_logger.cc
+	test/daemon.cc
+	test/change_user.cc
+	test/mountpoint_factory.cc
+	test/userdb.cc
 )
 
 target_include_directories(alltests PRIVATE
     src
+	test
     ${GMOCK_INCLUDE_DIRS}
     ${GTEST_INCLUDE_DIRS}
 )
@@ -149,6 +161,8 @@ target_compile_options(alltests PRIVATE ${GMOCK_CFLAGS} ${GTEST_CFLAGS} "-pthrea
 target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=wf_credentials_type
 	-Wl,--wrap=wf_credentials_get
+
+	-Wl,--wrap=wf_server_create
 
 	-Wl,--wrap=wfd_settings_get_string
 	-Wl,--wrap=wfd_settings_get_string_or_default
@@ -171,6 +185,15 @@ target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=pam_strerror
 	-Wl,--wrap=pam_authenticate
 	-Wl,--wrap=pam_acct_mgmt
+
+	-Wl,--wrap=config_setting_get_elem
+
+	-Wl,--wrap=getuid
+	-Wl,--wrap=getgrnam
+	-Wl,--wrap=setgid
+	-Wl,--wrap=setgroups
+	-Wl,--wrap=getpwnam
+	-Wl,--wrap=setuid
 
 	webfused-static
 	userdb
@@ -197,7 +220,7 @@ add_custom_target(check
 add_dependencies(check alltests)
 
 add_custom_target(memcheck
-    valgrind ./alltests)
+    valgrind --leak-check=full --error-exitcode=1 ./alltests)
 add_dependencies(memcheck alltests)
 
 add_custom_target(coverage

@@ -21,9 +21,13 @@ extern bool userdb_save(
     struct userdb * db,
     char const * filename);
 
-extern bool userdb_load(
+extern bool userdb_load_file(
     struct userdb * db,
     char const * filename);
+
+extern bool userdb_load_string(
+    struct userdb * db,
+    char const * contents);
 
 extern void userdb_add(
     struct userdb * db,

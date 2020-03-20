@@ -3,7 +3,7 @@
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
 
-#include "mock_settings.hpp"
+#include "mock/settings.hpp"
 
 #include <gtest/gtest.h>
 #include <stddef.h>
@@ -22,9 +22,9 @@ TEST(syslog_logger, init)
 TEST(syslog_logger, init_fail_invalid_facility)
 {
     MockSettings settings;
-    EXPECT_CALL(settings, getStringOrDefault(StrEq("ident"), _)).Times(1).WillOnce(Return("webfused_test"));
-    EXPECT_CALL(settings, getStringOrDefault(StrEq("facility"), _)).Times(1).WillOnce(Return("invalid"));
-    EXPECT_CALL(settings, getBool(StrEq("log_pid"))).Times(1).WillOnce(Return(false));
+    EXPECT_CALL(settings, wfd_settings_get_string_or_default(_,StrEq("ident"), _)).Times(1).WillOnce(Return("webfused_test"));
+    EXPECT_CALL(settings, wfd_settings_get_string_or_default(_,StrEq("facility"), _)).Times(1).WillOnce(Return("invalid"));
+    EXPECT_CALL(settings, wfd_settings_get_bool(_,StrEq("log_pid"))).Times(1).WillOnce(Return(false));
 
     wfd_settings * fake_settings = reinterpret_cast<wfd_settings*>(0xDEADBEEF);
     ASSERT_FALSE(wfd_syslog_logger_init(WFD_LOGLEVEL_ALL, fake_settings));

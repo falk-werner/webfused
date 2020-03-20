@@ -173,7 +173,7 @@ static int add_user(struct args * args)
     }
 
     struct userdb * db = userdb_create(args->pepper);
-    userdb_load(db, args->file);
+    userdb_load_file(db, args->file);
     userdb_add(db, args->username, args->password);
     bool result = userdb_save(db, args->file);
     userdb_dispose(db);
@@ -191,7 +191,7 @@ static int remove_user(struct args * args)
     }
 
     struct userdb * db = userdb_create(args->pepper);
-    userdb_load(db, args->file);
+    userdb_load_file(db, args->file);
     userdb_remove(db, args->username);
     bool result = userdb_save(db, args->file);
     userdb_dispose(db);
@@ -216,7 +216,7 @@ static int check_password(struct args * args)
     }
 
     struct userdb * db = userdb_create(args->pepper);
-    userdb_load(db, args->file);
+    userdb_load_file(db, args->file);
     bool result = userdb_check(db, args->username, args->password);
     userdb_dispose(db);
 

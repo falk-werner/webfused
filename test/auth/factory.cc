@@ -2,7 +2,7 @@
 #include "webfused/auth/factory.h"
 #include "webfused/auth/authenticator.h"
 #include "webfused/log/log.h"
-#include "mock_logger.hpp"
+#include "mock/logger.hpp"
 
 using ::testing::_;
 using ::webfused_test::MockLogger;

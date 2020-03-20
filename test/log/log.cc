@@ -3,7 +3,7 @@
 
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
-#include "mock_logger.hpp"
+#include "mock/logger.hpp"
 
 using ::testing::_;
 using ::testing::StrEq;

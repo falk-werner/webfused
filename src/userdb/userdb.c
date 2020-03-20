@@ -77,19 +77,16 @@ static char hex_char(unsigned char value)
 static char * to_hex(unsigned char const * value, size_t length)
 {
     char * result = malloc((2 * length) + 1);
-    if (NULL != result)
+    for (size_t i = 0, j = 0; i < length; i++, j+=2)
     {
-        for (size_t i = 0, j = 0; i < length; i++, j+=2)
-        {
-            unsigned char high = (value[i] >> 4) & 0x0f;
-            unsigned char low =   value[i]       & 0x0f;
+        unsigned char high = (value[i] >> 4) & 0x0f;
+        unsigned char low =   value[i]       & 0x0f;
 
-            result[j    ] = hex_char(high);
-            result[j + 1] = hex_char(low);
-        }
-
-        result[2 * length] = '\0';
+        result[j    ] = hex_char(high);
+        result[j + 1] = hex_char(low);
     }
+
+    result[2 * length] = '\0';
 
     return result;
 }
@@ -120,21 +117,46 @@ static char * compute_hash(
     }
 
     char * result = NULL;
+    EVP_MD_CTX * context = EVP_MD_CTX_new();        
+    EVP_DigestInit_ex(context, digest, NULL);        
+    EVP_DigestUpdate(context, password, strlen(password));
+    EVP_DigestUpdate(context, salt, strlen(salt));
+    EVP_DigestUpdate(context, db->pepper, strlen(db->pepper));
+
     unsigned int hash_size = EVP_MD_size(digest);
     unsigned char * hash = malloc(hash_size);
+    EVP_DigestFinal_ex(context, hash, &hash_size);
+    EVP_MD_CTX_free(context);
 
-    if (NULL != hash)
+    result = to_hex(hash, hash_size);
+    free(hash);
+
+    return result;
+}
+
+static bool userdb_load(
+    struct userdb * db,
+    json_t * container)
+{
+    bool result = false;
+    if (NULL != container)
     {
-        EVP_MD_CTX * context = EVP_MD_CTX_new();        
-        EVP_DigestInit_ex(context, digest, NULL);        
-        EVP_DigestUpdate(context, password, strlen(password));
-        EVP_DigestUpdate(context, salt, strlen(salt));
-        EVP_DigestUpdate(context, db->pepper, strlen(db->pepper));
-        EVP_DigestFinal_ex(context, hash, &hash_size);
-        EVP_MD_CTX_free(context);
+        json_t * meta = json_object_get(container, "meta");
+        json_t * users = json_object_get(container, "users");
 
-        result = to_hex(hash, hash_size);
-        free(hash);
+        if ((is_compatible(meta)) && (json_is_object(users))) {
+            json_t * hash_algorithm = json_object_get(meta, "hash_algorithm");
+            free(db->hash_algorithm);
+            db->hash_algorithm = strdup(json_string_value(hash_algorithm));
+
+            json_decref(db->users);
+            json_incref(users);
+            db->users = users;
+
+            result = true;
+        }
+
+        json_decref(container);
     }
 
     return result;
@@ -144,12 +166,9 @@ struct userdb * userdb_create(
     char const * pepper)
 {
     struct userdb * db = malloc(sizeof(struct userdb));
-    if (NULL != db)
-    {
-        db->users = json_object();
-        db->pepper = strdup(pepper);
-        db->hash_algorithm = strdup(USERDB_HASH_ALGORITHM);
-    }
+    db->users = json_object();
+    db->pepper = strdup(pepper);
+    db->hash_algorithm = strdup(USERDB_HASH_ALGORITHM);
 
     return db;
 }
@@ -184,35 +203,22 @@ bool userdb_save(
     return (0 == result);
 }
 
-
-bool userdb_load(
+bool userdb_load_file(
     struct userdb * db,
     char const * filename)
 {
-    bool result = false;
     json_t * container = json_load_file(filename, 0, NULL);
-    if (NULL != container)
-    {
-        json_t * meta = json_object_get(container, "meta");
-        json_t * users = json_object_get(container, "users");
-
-        if ((is_compatible(meta)) && (json_is_object(users))) {
-            json_t * hash_algorithm = json_object_get(meta, "hash_algorithm");
-            free(db->hash_algorithm);
-            db->hash_algorithm = strdup(json_string_value(hash_algorithm));
-
-            json_decref(db->users);
-            json_incref(users);
-            db->users = users;
-
-            result = true;
-        }
-
-        json_decref(container);
-    }
-
-    return result;
+    return userdb_load(db, container);
 }
+
+bool userdb_load_string(
+    struct userdb * db,
+    char const * contents)
+{
+    json_t * container = json_loads(contents, 0, NULL);
+    return userdb_load(db, container);
+}
+
 
 void userdb_add(
     struct userdb * db,
@@ -243,7 +249,7 @@ static char const * json_object_get_string(
     json_t * object,
     char const * key)
 {
-    char const * result = NULL;
+    char const * result = "";
 
     json_t * string_holder = json_object_get(object, key);
     if (json_is_string(string_holder))

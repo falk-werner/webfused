@@ -1,9 +1,15 @@
 #include "webfused/daemon.h"
 
+#include "mock/server.hpp"
+
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+
+using ::webfused_test::MockServer;
+using ::testing::_;
+using ::testing::Return;
 
 TEST(daemon, print_usage)
 {
@@ -65,4 +71,18 @@ TEST(daemon, run)
     ASSERT_EQ(EXIT_SUCCESS, exit_code);
 
     thread.join();
+}
+
+TEST(daemon, run_failed_to_create_server)
+{
+    MockServer server;
+    EXPECT_CALL(server, wf_server_create(_)).Times(1).WillOnce(Return(nullptr));
+
+    char argv0[] = "daemon";
+    char argv1[] = "-f";
+    char argv2[] = "webfused.conf";
+    char * argv[] = { argv0, argv1, argv2, NULL};
+
+    int exit_code = wfd_daemon_run(3, argv);
+    ASSERT_EQ(EXIT_FAILURE, exit_code);
 }

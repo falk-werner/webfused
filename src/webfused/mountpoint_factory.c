@@ -141,10 +141,6 @@ wfd_mountpoint_factory_create_mountpoint(
     wf_mountpoint_set_userdata(result,
         &fs->in_use, &wfd_mountpoint_factory_release_mountpoint);
 
-    WFD_INFO("create mountpoint \'%s\' at path \'%s\': %s",
-        filesystem,
-        fs->mount_point,
-        result ? "success" : "failure");
-
+    WFD_INFO("created mountpoint \'%s\' at path \'%s\'", filesystem, fs->mount_point);
     return result;
 }
