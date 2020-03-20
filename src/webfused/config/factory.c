@@ -71,7 +71,7 @@ wfd_config_read_logger(
         int rc = config_lookup_string(config, "log.provider", &provider);
         if (CONFIG_TRUE != rc)
         {
-            WFD_ERROR("missing log provider");
+            WFD_ERROR("failed to load config: missing log provider");
             result = false;
         }
 
@@ -81,7 +81,7 @@ wfd_config_read_logger(
             rc = config_lookup_string(config, "log.level", &level_str);
             if (CONFIG_TRUE != rc)
             {
-                WFD_ERROR("missing log level");
+                WFD_ERROR("failed to load config: missing log level");
                 result = false;
             }
         }
@@ -92,7 +92,7 @@ wfd_config_read_logger(
             bool success = wfd_log_level_parse(level_str, &level);
             if (!success)
             {
-                WFD_ERROR("failed to parse log level: unknown valuie \'%s\'", level_str);
+                WFD_ERROR("failed to parse log level: unknown value \'%s\'", level_str);
                 result = false;
             }
         }
@@ -110,7 +110,7 @@ wfd_config_read_logger(
     return result;
 }
 
-static bool
+static void
 wfd_config_read_server(
     config_t * config,
     struct wfd_config * builder)
@@ -149,8 +149,6 @@ wfd_config_read_server(
     {
         wfd_config_set_server_document_root(builder, doc_root);
     }
-
-    return true;
 }
 
 static bool
@@ -159,6 +157,10 @@ wfd_config_read_authenticator(
     struct wfd_config * builder)
 {
     bool result = (NULL != authenticator);
+    if (!result)
+    {
+        WFD_ERROR("failed to load config: invalid authentication section");
+    }
 
     char const * provider_name = NULL;
     if (result) 
@@ -166,7 +168,7 @@ wfd_config_read_authenticator(
         int rc = config_setting_lookup_string(authenticator, "provider", &provider_name);
         if (CONFIG_TRUE != rc)
         {
-            WFD_ERROR("missing authentication provider");
+            WFD_ERROR("failed to load config: missing authentication provider");
             result = false;
         }
     }
@@ -177,7 +179,7 @@ wfd_config_read_authenticator(
         settings = config_setting_lookup(authenticator, "settings");
         if (NULL == settings)
         {
-            WFD_ERROR("missing authentication settings");
+            WFD_ERROR("failed to load config: missing authentication settings");
             result = false;
         }
     }
@@ -312,11 +314,15 @@ wfd_config_load(
 
     bool success = wfd_config_check_version(config)
         && wfd_config_read_logger(config, result)
-        && wfd_config_read_server(config, result)
         && wfd_config_read_authentication(config, result)
         && wfd_config_read_filesystems(config, result)
         && wfd_config_read_user(config, result)
         ;
+    
+    if (success)
+    {
+        wfd_config_read_server(config, result);
+    }
     
     if (!success)
     {

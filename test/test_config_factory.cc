@@ -5,7 +5,7 @@
 #include "webfused/log/log.h"
 #include "mock_logger.hpp"
 #include "mock_config_builder.hpp"
-
+#include "mock_libconfig.hpp"
 
 using ::testing::_;
 using ::testing::Return;
@@ -13,6 +13,7 @@ using ::testing::StrictMock;
 using ::testing::StrEq;
 using ::webfused_test::MockLogger;
 using ::webfused_test::MockConfigBuilder;
+using ::webfused_test::MockLibConfig;
 
 TEST(config, is_loadable)
 {
@@ -372,6 +373,33 @@ TEST(config, failed_missing_auth_settings)
     ASSERT_EQ(nullptr, config);
 }
 
+TEST(config, failed_auth_settings_get_elem)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, dispose(_)).Times(1);
+
+    MockLibConfig libconfig;
+    EXPECT_CALL(libconfig, config_setting_get_elem(_,_)).Times(1).WillOnce(Return(nullptr));
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "authentication:\n"
+        "(\n"
+        "  {\n"
+        "    provider = \"test\"\n"
+        "    settings: { }\n"
+        "  }\n"
+        ")\n"
+        ;
+    struct wfd_config * config = wfd_config_load_string(config_text);
+    ASSERT_EQ(nullptr, config);
+}
+
 TEST(config, filesystems)
 {
     MockLogger logger;
@@ -473,6 +501,31 @@ TEST(config, filesystems_failed_missing_mountpoint)
         "filesystems:\n"
         "(\n"
         "  {name = \"foo\"}\n"
+        ")\n"
+        ;
+    struct wfd_config * config = wfd_config_load_string(config_text);
+    ASSERT_EQ(nullptr, config);
+}
+
+TEST(config, filesystems_failed_missing_elem)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(WFD_LOGLEVEL_ERROR, _, _)).Times(1);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, dispose(_)).Times(1);
+    EXPECT_CALL(builder, addFilesystem(_, _)).Times(0);
+
+    MockLibConfig libconfig;
+    EXPECT_CALL(libconfig, config_setting_get_elem(_,_)).Times(1).WillOnce(Return(nullptr));
+
+    char const config_text[] = 
+        "version = { major = 1, minor = 0 }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
         ")\n"
         ;
     struct wfd_config * config = wfd_config_load_string(config_text);

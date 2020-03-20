@@ -124,6 +124,8 @@ add_executable(alltests
 	test/mock_credentials.cc
 	test/mock_settings.cc
 	test/mock_pam.cc
+	test/mock_libconfig.cc
+	test/mock_linux.cc
     test/test_config_factory.cc
 	test/test_config.cc
 	test/test_settings.cc
@@ -136,6 +138,7 @@ add_executable(alltests
 	test/test_stderr_logger.cc
 	test/test_syslog_logger.cc
 	test/test_daemon.cc
+	test/test_change_user.cc
 )
 
 target_include_directories(alltests PRIVATE
@@ -171,6 +174,15 @@ target_link_libraries(alltests PRIVATE
 	-Wl,--wrap=pam_strerror
 	-Wl,--wrap=pam_authenticate
 	-Wl,--wrap=pam_acct_mgmt
+
+	-Wl,--wrap=config_setting_get_elem
+
+	-Wl,--wrap=getuid
+	-Wl,--wrap=getgrnam
+	-Wl,--wrap=setgid
+	-Wl,--wrap=setgroups
+	-Wl,--wrap=getpwnam
+	-Wl,--wrap=setuid
 
 	webfused-static
 	userdb

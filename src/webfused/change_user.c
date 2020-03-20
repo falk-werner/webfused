@@ -94,7 +94,7 @@ wfd_change_user(
 
     if (is_root)
     {
-        result = ((NULL != user) || (NULL != group));
+        result = ((NULL != user) && (NULL != group));
         if (!result)
         {
             WFD_ERROR("webfuse daemon cannot be run as root: specify user and group in config");
