@@ -3,9 +3,9 @@
 #include "webfused/config/factory.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
-#include "mock_logger.hpp"
-#include "mock_config_builder.hpp"
-#include "mock_libconfig.hpp"
+#include "mock/logger.hpp"
+#include "mock/config_builder.hpp"
+#include "mock/libconfig.hpp"
 
 using ::testing::_;
 using ::testing::Return;

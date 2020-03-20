@@ -1,4 +1,4 @@
-#include "mock_settings.hpp"
+#include "mock/settings.hpp"
 
 extern "C"
 {

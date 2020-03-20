@@ -1,5 +1,5 @@
-#include "mock_server.hpp"
-#include "wrap_utils.hpp"
+#include "mock/server.hpp"
+#include "util/wrap.hpp"
 
 extern "C"
 {

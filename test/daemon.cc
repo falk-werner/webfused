@@ -1,6 +1,6 @@
 #include "webfused/daemon.h"
 
-#include "mock_server.hpp"
+#include "mock/server.hpp"
 
 #include <gtest/gtest.h>
 #include <cstdlib>

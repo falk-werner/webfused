@@ -1,5 +1,5 @@
-#ifndef WFD_WRAP_UTILS_HPP
-#define WFD_WRAP_UTILS_HPP
+#ifndef WFD_UTIL_WRAP_HPP
+#define WFD_UTIL_WRAP_HPP
 
 #define WFD_WRAP_FUNC0( GLOBAL_VAR, RETURN_TYPE, FUNC_NAME ) \
     extern RETURN_TYPE __real_ ## FUNC_NAME (); \

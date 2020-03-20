@@ -1,4 +1,4 @@
-#include "mock_logger.hpp"
+#include "mock/logger.hpp"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
 

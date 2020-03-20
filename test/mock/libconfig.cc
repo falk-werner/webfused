@@ -1,5 +1,5 @@
-#include "mock_libconfig.hpp"
-#include "wrap_utils.hpp"
+#include "mock/libconfig.hpp"
+#include "util/wrap.hpp"
 
 extern "C"
 {

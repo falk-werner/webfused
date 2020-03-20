@@ -1,4 +1,4 @@
-#include "mock_config_builder.hpp"
+#include "mock/config_builder.hpp"
 
 extern "C"
 {

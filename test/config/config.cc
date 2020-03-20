@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 #include "webfused/config/config.h"
 #include "webfused/config/config_intern.h"
-#include "mock_settings.hpp"
+#include "mock/settings.hpp"
 
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
-#include "mock_logger.hpp"
+#include "mock/logger.hpp"
 using ::webfused_test::MockLogger;
 using ::testing::_;
 

@@ -1,5 +1,5 @@
 #include "webfused/change_user.h"
-#include "mock_linux.hpp"
+#include "mock/linux.hpp"
 #include <gtest/gtest.h>
 
 using ::webfused_test::MockLinux;

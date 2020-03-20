@@ -1,4 +1,4 @@
-#include "mock_pam.hpp"
+#include "mock/pam.hpp"
 
 extern "C"
 {

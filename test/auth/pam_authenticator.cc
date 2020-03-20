@@ -3,9 +3,9 @@
 #include "webfused/config/settings.h"
 #include "webfused/auth/factory.h"
 
-#include "mock_credentials.hpp"
-#include "mock_settings.hpp"
-#include "mock_pam.hpp"
+#include "mock/credentials.hpp"
+#include "mock/settings.hpp"
+#include "mock/pam.hpp"
 
 #include <gtest/gtest.h>
 

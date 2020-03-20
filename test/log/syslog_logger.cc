@@ -3,7 +3,7 @@
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
 
-#include "mock_settings.hpp"
+#include "mock/settings.hpp"
 
 #include <gtest/gtest.h>
 #include <stddef.h>

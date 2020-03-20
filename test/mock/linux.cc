@@ -1,5 +1,5 @@
-#include "mock_linux.hpp"
-#include "wrap_utils.hpp"
+#include "mock/linux.hpp"
+#include "util/wrap.hpp"
 
 extern "C"
 {
