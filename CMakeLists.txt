@@ -140,6 +140,7 @@ add_executable(alltests
 	test/test_syslog_logger.cc
 	test/test_daemon.cc
 	test/test_change_user.cc
+	test/test_userdb.cc
 )
 
 target_include_directories(alltests PRIVATE

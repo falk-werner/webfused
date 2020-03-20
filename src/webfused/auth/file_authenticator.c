@@ -37,7 +37,7 @@ wfd_file_authenticator_authenticate(
 	if ((NULL != username) && (NULL != password))
 	{
 		struct userdb * db = userdb_create("");
-		result = userdb_load(db, authenticator->filename); 
+		result = userdb_load_file(db, authenticator->filename); 
 		if (result)
 		{
 			result = userdb_check(db, username, password);
