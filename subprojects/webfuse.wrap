@@ -1,7 +1,7 @@
 [wrap-file]
-directory = webfuse-master
+directory = webfuse-meson_build
 
-source_url = https://github.com/falk-werner/webfuse/archive/master.tar.gz
-source_filename = master.tar.gz
-source_hash = 0a496dd9eab3e14585dc3513dca80e7df046cfe2bb8ddae120bf7d00a9f6b5ec
+source_url = https://github.com/falk-werner/webfuse/archive/meson_build.tar.gz
+source_filename = meson_build.tar.gz
+source_hash = 8bd4e07d0ff67f77c6465617986a2e698b4c1d6cd0abb66f6056fb9be2a29453
 
