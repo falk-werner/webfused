@@ -37,21 +37,9 @@ env:
               
 
 before_install:
+    - sudo pip3 install --system meson
     - mkdir .deps
     - cd .deps
-    # libfuse
-    - sudo pip3 install --system meson
-    - wget https://github.com/libfuse/libfuse/archive/fuse-3.9.1.tar.gz -O fuse.tar.gz
-    - tar -xf fuse.tar.gz
-    - cd libfuse-fuse-3.9.1
-    - mkdir .build
-    - cd .build
-    - meson ..
-    - ninja
-    - sudo ninja install
-    - cd ..
-    - cd ..
-    # libwebsockets
     - wget https://github.com/warmcat/libwebsockets/archive/v3.2.0.tar.gz -O libwebsockets.tar.gz
     - tar -xf libwebsockets.tar.gz
     - cd libwebsockets-3.2.0
@@ -62,49 +50,15 @@ before_install:
     - sudo make install
     - cd ..
     - cd ..
-    # jansson
-    - wget https://github.com/akheron/jansson/archive/v2.12.tar.gz -O jansson.tar.gz
-    - tar -xf jansson.tar.gz
-    - cd jansson-2.12
-    - mkdir .build
-    - cd .build
-    - cmake ..
-    - make
-    - sudo make install
-    - cd ..
-    - cd ..
-    # libwebfuse
-    - wget https://github.com/falk-werner/webfuse/archive/v0.2.0.tar.gz -O webfuse.tar.gz
-    - tar -xf webfuse.tar.gz
-    - cd webfuse-0.2.0
-    - mkdir .build
-    - cd .build
-    - cmake -DWITHOUT_TESTS=ON ..
-    - make
-    - sudo make install
-    - cd ..
-    - cd ..
-    # gtest
-    - wget https://github.com/google/googletest/archive/release-1.10.0.tar.gz
-    - tar -xf release-1.10.0.tar.gz
-    - cd googletest-release-1.10.0
-    - mkdir .build
-    - cd .build
-    - cmake ..
-    - make
-    - sudo make install
-    - cd ..
-    - cd ..
     - cd ..
 
 before_script:
-    - mkdir build
+    - meson build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+    - ninja
 
 script:
-    - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu"
-    - make $CHECK_TARGET
+    - meson test
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)  
