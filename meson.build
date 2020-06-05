@@ -1,8 +1,10 @@
 project('webfused', 'c', 'cpp', version: '0.3.0', license: 'LGPL-3.0+')
 
+c_compiler = meson.get_compiler('c')
+
 openssl_dep = dependency('openssl', version: '>=1.1.1')
 libconfig_dep = dependency('libconfig', version: '>=1.5')
-pam_dep = declare_dependency(link_args: ['-lpam'])
+pam_dep = c_compiler.find_library('pam')
 
 libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.13', required: false)
 if not libwebsockets_dep.found()
