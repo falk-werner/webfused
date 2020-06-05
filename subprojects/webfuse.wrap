@@ -1,7 +1,7 @@
 [wrap-file]
-directory = webfuse-meson_build
+directory = webfuse-0.3.0
 
-source_url = https://github.com/falk-werner/webfuse/archive/meson_build.tar.gz
-source_filename = meson_build.tar.gz
-source_hash = 8bd4e07d0ff67f77c6465617986a2e698b4c1d6cd0abb66f6056fb9be2a29453
+source_url = https://github.com/falk-werner/webfuse/archive/v0.3.0.tar.gz
+source_filename = v0.3.0.tar.gz
+source_hash = 3c0c0755be24f36cac563582b931f2fc1ba8e7a87bd240e8fefd4252cc2a10a4
 

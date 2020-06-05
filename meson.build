@@ -4,7 +4,13 @@ openssl_dep = dependency('openssl', version: '>=1.1.1')
 libconfig_dep = dependency('libconfig', version: '>=1.5')
 pam_dep = declare_dependency(link_args: ['-lpam'])
 
-libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.1') 
+libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.13', required: false)
+if not libwebsockets_dep.found()
+    cmake = import('cmake')
+    libwebsockets = cmake.subproject('libwebsockets')
+    libwebsockets_dep = libwebsockets.dependency('websockets_shared')
+endif
+
 jansson_dep = dependency('jansson', version: '>=2.11', fallback: ['jansson', 'jansson_dep'])
 libfuse_dep = dependency('fuse3', version: '>=3.8.0', fallback: ['fuse3', 'libfuse_dep'])
 gtest_dep = dependency('gtest', version: '>=1.10.0', fallback: ['gtest', 'gtest_dep']) 

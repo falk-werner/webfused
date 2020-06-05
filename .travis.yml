@@ -38,19 +38,6 @@ env:
 
 before_install:
     - sudo pip3 install --system meson
-    - mkdir .deps
-    - cd .deps
-    - wget https://github.com/warmcat/libwebsockets/archive/v3.2.0.tar.gz -O libwebsockets.tar.gz
-    - tar -xf libwebsockets.tar.gz
-    - cd libwebsockets-3.2.0
-    - mkdir .build
-    - cd .build
-    - cmake ..
-    - make
-    - sudo make install
-    - cd ..
-    - cd ..
-    - cd ..
 
 before_script:
     - meson build
