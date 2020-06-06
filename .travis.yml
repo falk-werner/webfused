@@ -31,7 +31,7 @@ env:
     matrix:
         - BUILD_TYPE=debug   COVERAGE=true  CHECK_OPTS=
         - BUILD_TYPE=debug   COVERAGE=false CHECK_OPTS=--wrap='valgrind --error-exitcode=42'
-        - BUILD_TPYE=release COVERAGE=false CHECK_OPTS=
+        - BUILD_TYPE=release COVERAGE=false CHECK_OPTS=
         - BUILD_TYPE=minsize COVERAGE=false CHECK_OPTS=
               
 
