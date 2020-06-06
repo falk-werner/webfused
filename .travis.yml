@@ -16,7 +16,6 @@ addons:
             - ca-certificates
             - openssl
             - libssl-dev
-            - uuid-dev
             - udev
             - gettext
             - python3
@@ -30,22 +29,22 @@ addons:
 
 env:
     matrix:
-        - BUILD_TYPE=Coverage   CHECK_TARGET=check
-        - BUILD_TYPE=Debug      CHECK_TARGET=memcheck
-        - BUILD_TPYE=Release    CHECK_TARGET=check
-        - BUILD_TYPE=MinSizeRel CHECK_TARGET=check
+        - BUILD_TYPE=debug   COVERAGE=true  CHECK_OPTS=
+        - BUILD_TYPE=debug   COVERAGE=false CHECK_OPTS=--wrap='valgrind --error-exitcode=42'
+        - BUILD_TPYE=release COVERAGE=false CHECK_OPTS=
+        - BUILD_TYPE=minsize COVERAGE=false CHECK_OPTS=
               
 
 before_install:
     - sudo pip3 install --system meson
 
 before_script:
-    - meson build
+    - meson -Dbuildtype=$BUILD_TYPE -Db_coverage=$COVERAGE build
     - cd build
     - ninja
 
 script:
-    - meson test
+    - meson test $CHECK_OPTS
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)  
