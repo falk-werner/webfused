@@ -133,7 +133,7 @@ int wfd_daemon_run(int argc, char * argv[])
 			{
 				while (!shutdown_requested)
 				{
-					wf_server_service(server, WFD_SERVICE_TIMEOUT);
+					wf_server_service(server);
 				}
 
 				wf_server_dispose(server);			

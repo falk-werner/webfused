@@ -2,11 +2,9 @@
 
 To install dependecies, see below.
 
-    cd webfused
-    mkdir build
+    meson build
     cd build
-    cmake ..
-    make
+    ninja
     ./webfused -f webfused.conf
 
 ## Dependencies
@@ -19,6 +17,10 @@ To install dependecies, see below.
 - [libconfig](https://hyperrealm.github.io/libconfig/)
 - [linux-pam](http://www.linux-pam.org/)
 - [Google Test](https://github.com/google/googletest) *(Test only)*
+
+It is recommended to provide all dependencies outside of the project.
+
+To simply development, some dependencies are bundled using meson wrap files. Note that installing webfused will also install subprojects, when they are used (this is typically not what you want).
 
 ### libfuse
 
