@@ -1,5 +1,7 @@
 project('webfused', 'c', 'cpp', version: '0.3.0', license: 'LGPL-3.0+')
 
+without_tests = get_option('without_tests')
+
 c_compiler = meson.get_compiler('c')
 
 openssl_dep = dependency('openssl', version: '>=1.1.1')
@@ -66,3 +68,88 @@ webfused = executable('webfused',
 
 install_data('etc/webfused.conf', install_dir: '/etc')
 
+
+if not without_tests
+
+gtest_dep = dependency('gtest', version: '>=1.10.0', fallback: ['gtest', 'gtest_dep'])
+gmock_main_dep = dependency('gmock_main', version: '>=1.10.0', fallback: ['gtest', 'gmock_main_dep'])
+
+webfused_conf    = configure_file(input: 'etc/webfused.conf'    , output: 'webfused.conf'   , copy: true)
+invalid_conf     = configure_file(input: 'test/invalid.conf'    , output: 'invalid.conf'    , copy: true)
+test_passwd_json = configure_file(input: 'test/test_passwd.json', output: 'test_passwd.json', copy: true)
+
+alltests = executable('alltests',
+	'test/mock/config_builder.cc',
+	'test/mock/logger.cc',
+	'test/mock/credentials.cc',
+	'test/mock/settings.cc',
+	'test/mock/pam.cc',
+	'test/mock/libconfig.cc',
+	'test/mock/linux.cc',
+	'test/mock/server.cc',
+    'test/config/configfile.cc',
+    'test/config/configfile_version.cc',
+    'test/config/configfile_server.cc',
+    'test/config/configfile_auth.cc',
+    'test/config/configfile_filesystem.cc',
+    'test/config/configfile_log.cc',
+    'test/config/configfile_user.cc',
+	'test/config/config.cc',
+	'test/config/settings.cc',
+	'test/auth/factory.cc',
+	'test/auth/file_authenticator.cc',
+	'test/auth/pam_authenticator.cc',
+	'test/log/log.cc',
+	'test/log/log_manager.cc',
+	'test/log/stderr_logger.cc',
+	'test/log/syslog_logger.cc',
+	'test/daemon.cc',
+	'test/change_user.cc',
+	'test/mountpoint_factory.cc',
+	'test/userdb.cc',
+    include_directories: ['src', 'test'],
+    link_args: [
+        '-Wl,--wrap=wf_credentials_type',
+        '-Wl,--wrap=wf_credentials_get',
+
+        '-Wl,--wrap=wf_server_create',
+
+        '-Wl,--wrap=wfd_settings_get_string',
+        '-Wl,--wrap=wfd_settings_get_string_or_default',
+        '-Wl,--wrap=wfd_settings_get_bool',
+
+        '-Wl,--wrap=wfd_config_create',
+        '-Wl,--wrap=wfd_config_dispose',
+        '-Wl,--wrap=wfd_config_set_server_vhostname',
+        '-Wl,--wrap=wfd_config_set_server_port',
+        '-Wl,--wrap=wfd_config_set_server_key',
+        '-Wl,--wrap=wfd_config_set_server_cert',
+        '-Wl,--wrap=wfd_config_set_server_document_root',
+        '-Wl,--wrap=wfd_config_add_auth_provider',
+        '-Wl,--wrap=wfd_config_add_filesystem',
+        '-Wl,--wrap=wfd_config_set_logger',
+        '-Wl,--wrap=wfd_config_set_user',
+
+        '-Wl,--wrap=pam_start',
+        '-Wl,--wrap=pam_end',
+        '-Wl,--wrap=pam_strerror',
+        '-Wl,--wrap=pam_authenticate',
+        '-Wl,--wrap=pam_acct_mgmt',
+
+        '-Wl,--wrap=config_setting_get_elem',
+
+        '-Wl,--wrap=getuid',
+        '-Wl,--wrap=getgrnam',
+        '-Wl,--wrap=setgid',
+        '-Wl,--wrap=setgroups',
+        '-Wl,--wrap=getpwnam',
+        '-Wl,--wrap=setuid'
+    ],
+    dependencies: [
+        libwebfused_dep,
+        gtest_dep,
+        gmock_main_dep])
+
+test('alltests', alltests)
+
+endif
