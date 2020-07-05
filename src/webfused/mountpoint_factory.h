@@ -1,7 +1,7 @@
 #ifndef WFD_MOUNTPOINT_FACTORY_H
 #define WFD_MOUNTPOINT_FACTORY_H
 
-#include "webfuse/adapter/mountpoint_factory.h"
+#include "webfuse/mountpoint_factory.h"
 
 #ifndef __cplusplus
 #include <stdbool.h>

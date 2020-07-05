@@ -1,7 +1,7 @@
 #ifndef WFD_MOCK_SERVER_HPP
 #define WFD_MOCK_SERVER_HPP
 
-#include <webfuse/adapter/server.h>
+#include <webfuse/server.h>
 #include <gmock/gmock.h>
 
 namespace webfused_test

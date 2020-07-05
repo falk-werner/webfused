@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "webfused/mountpoint_factory.h"
-#include <webfuse/adapter/mountpoint.h>
+#include <webfuse/mountpoint.h>
 
 #include <cstring>
 

@@ -19,8 +19,8 @@ jansson_dep = dependency('jansson', version: '>=2.11', fallback: ['jansson', 'ja
 libfuse_dep = dependency('fuse3', version: '>=3.8.0', fallback: ['fuse3', 'libfuse_dep'])
 gtest_dep = dependency('gtest', version: '>=1.10.0', fallback: ['gtest', 'gtest_dep']) 
 gmock_main_dep = dependency('gmock_main', version: '>=1.10.0', fallback: ['gtest', 'gmock_main_dep'])
-webfuse_adapter_dep = dependency('webfuse_adapter', version: '>=0.3.0', 
-    fallback: ['webfuse', 'webfuse_adapter_dep'], default_options: ['without_provider=true'])
+webfuse_adapter_dep = dependency('webfuse', version: '>=0.4.0', 
+    fallback: ['webfuse', 'webfuse_dep'], default_options: ['without_tests=true'])
 
 inc_dir = include_directories('src')
 

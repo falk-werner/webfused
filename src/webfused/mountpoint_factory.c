@@ -1,7 +1,7 @@
 #include "webfused/mountpoint_factory.h"
 #include "webfused/log/log.h"
 
-#include <webfuse/adapter/mountpoint.h>
+#include <webfuse/mountpoint.h>
 
 #include <sys/stat.h>
 #include <stdlib.h>

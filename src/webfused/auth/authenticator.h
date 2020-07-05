@@ -1,7 +1,7 @@
 #ifndef WFD_AUTH_AUTHENTICATOR_H
 #define WFD_AUTH_AUTHENTICATOR_H
 
-#include "webfuse/adapter/authenticate.h"
+#include "webfuse/authenticate.h"
 
 #ifdef __cplusplus
 extern "C"

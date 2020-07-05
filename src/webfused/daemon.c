@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include <webfuse_adapter.h>
+#include <webfuse/webfuse.h>
 #include "webfused/config/config.h"
 #include "webfused/config/factory.h"
 #include "webfused/log/log.h"
