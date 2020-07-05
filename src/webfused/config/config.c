@@ -1,10 +1,11 @@
 #include "webfused/config/config.h"
 #include "webfused/config/config_intern.h"
-#include "webfuse/adapter/server_config.h"
 #include "webfused/auth/factory.h"
 #include "webfused/auth/authenticator.h"
 #include "webfused/mountpoint_factory.h"
 #include "webfused/log/manager.h"
+
+#include <webfuse/server_config.h>
 
 #include <stdlib.h>
 #include <string.h>

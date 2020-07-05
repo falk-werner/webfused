@@ -3,7 +3,7 @@
 #include "webfused/config/settings.h"
 #include "webfused/log/log.h"
 
-#include "webfuse/adapter/credentials.h"
+#include <webfuse/credentials.h>
 
 #include <security/pam_appl.h>
 #include <stdlib.h>
@@ -73,7 +73,7 @@ wfd_pam_authenticator_dispose(
 
 static bool 
 wfd_pam_authenticator_authenticate(
-    struct wf_credentials * credentials,
+    struct wf_credentials const * credentials,
     void * user_data)
 {
     bool result = false;

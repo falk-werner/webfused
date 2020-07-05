@@ -4,7 +4,7 @@
 #include "userdb/userdb.h"
 #include "webfused/log/log.h"
 
-#include <webfuse/adapter/credentials.h>
+#include <webfuse/credentials.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +26,7 @@ wfd_file_authenticator_dispose(
 
 static bool 
 wfd_file_authenticator_authenticate(
-    struct wf_credentials * credentials,
+    struct wf_credentials const * credentials,
     void * user_data)
 {
     bool result = false;
