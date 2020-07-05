@@ -8,7 +8,7 @@ openssl_dep = dependency('openssl', version: '>=1.1.1')
 libconfig_dep = dependency('libconfig', version: '>=1.5')
 pam_dep = c_compiler.find_library('pam')
 
-libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.13', required: false)
+libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.0', required: false)
 if not libwebsockets_dep.found()
     cmake = import('cmake')
     libwebsockets = cmake.subproject('libwebsockets')
