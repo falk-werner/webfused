@@ -28,6 +28,7 @@ addons:
             - valgrind
 
 env:
+    - LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
     matrix:
         - BUILD_TYPE=debug   COVERAGE=true  CHECK_OPTS=
         - BUILD_TYPE=debug   COVERAGE=false CHECK_OPTS=--wrap='valgrind --error-exitcode=42'
