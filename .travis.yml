@@ -28,7 +28,6 @@ addons:
             - valgrind
 
 env:
-    - LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
     matrix:
         - BUILD_TYPE=debug   COVERAGE=true  CHECK_OPTS=
         - BUILD_TYPE=debug   COVERAGE=false CHECK_OPTS=--wrap='valgrind --error-exitcode=42'
@@ -46,6 +45,7 @@ before_script:
     - ninja
 
 script:
+    - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
     - meson test --print-errorlogs $CHECK_OPTS
 
 after_success:
