@@ -21,10 +21,10 @@ install_package() {
     meson)
         cd "${!PACKAGE_DIR}"
         meson build
-        cd build
-        ninja
-        sudo ninja install
-        cd ../..
+        meson compile -C build
+        sudo meson install -C build
+        # DESTDIR=$DESTDIR ninja install
+        cd ..
         ;;
     cmake)
         mkdir "${!PACKAGE_DIR}/build"
@@ -32,6 +32,7 @@ install_package() {
         cmake ..
         make
         sudo make install
+        # DESTDIR=$DESTDIR make install
         cd ../..
         ;;
     *)
@@ -41,6 +42,9 @@ install_package() {
     esac
 }
 
+#DESTDIR=$(realpath .)/.deps
+#rm -rf .${DESTDIR}
+#mkdir ${DESTDIR}
 
 CURRENT_DIR=$(pwd)
 WORKING_DIR=$(mktemp -d /tmp/install_deps_XXXXXX)
