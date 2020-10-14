@@ -36,6 +36,7 @@ env:
               
 
 before_install:
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
     - sudo pip3 install --system meson
     - ./install_deps.sh
 
@@ -45,8 +46,7 @@ before_script:
     - ninja
 
 script:
-    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-    - echo $LD_LIBRARY_PATH
+    - echo LD_LIBRARY_PATH $LD_LIBRARY_PATH
     - meson test --print-errorlogs $CHECK_OPTS
 
 after_success:
