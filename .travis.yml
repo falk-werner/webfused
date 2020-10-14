@@ -46,7 +46,6 @@ before_script:
     - ninja
 
 script:
-    - echo LD_LIBRARY_PATH $LD_LIBRARY_PATH
     - meson test --print-errorlogs $CHECK_OPTS
 
 after_success:
