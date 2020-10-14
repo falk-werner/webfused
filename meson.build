@@ -8,15 +8,10 @@ openssl_dep = dependency('openssl', version: '>=1.1.1')
 libconfig_dep = dependency('libconfig', version: '>=1.5')
 pam_dep = c_compiler.find_library('pam')
 
-libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.0', required: false)
-if not libwebsockets_dep.found()
-    cmake = import('cmake')
-    libwebsockets = cmake.subproject('libwebsockets')
-    libwebsockets_dep = libwebsockets.dependency('websockets_shared')
-endif
+libwebsockets_dep = dependency('libwebsockets', version: '>=3.0.0')
+jansson_dep = dependency('jansson', version: '>=2.11')
+libfuse_dep = dependency('fuse3', version: '>=3.8.0')
 
-jansson_dep = dependency('jansson', version: '>=2.11', fallback: ['jansson', 'jansson_dep'])
-libfuse_dep = dependency('fuse3', version: '>=3.8.0', fallback: ['fuse3', 'libfuse_dep'])
 webfuse_adapter_dep = dependency('webfuse', version: '>=0.5.0', 
     fallback: ['webfuse', 'webfuse_dep'], default_options: ['without_tests=true'])
 
