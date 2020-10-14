@@ -19,9 +19,9 @@ jansson_DIR=jansson-${jansson_VERSION}
 jansson_TYPE=cmake
 
 gtest_VERSION=1.10.0
-gtest_URL=https://github.com/google/googletest/archive/release-${1.10.0}.tar.gz
+gtest_URL=https://github.com/google/googletest/archive/release-${gtest_VERSION}.tar.gz
 gtest_md5=ecd1fa65e7de707cd5c00bdac56022cd
-gtest_DIR=googletest-release-${1.10.0}
+gtest_DIR=googletest-release-${gtest_VERSION}
 gtest_TYPE=cmake
 
 webfuse_VERSION=0.5.0
