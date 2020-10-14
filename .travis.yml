@@ -37,7 +37,7 @@ env:
 
 before_install:
     - sudo pip3 install --system meson
-    - ./install_deps
+    - ./install_deps.sh
 
 before_script:
     - meson -Dbuildtype=$BUILD_TYPE -Db_coverage=$COVERAGE build
