@@ -46,7 +46,7 @@ before_script:
     - ninja
 
 script:
-    - meson test --print-errorlogs $CHECK_OPTS
+    - meson test --print-errorlogs -t 10 $CHECK_OPTS
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)  
