@@ -1,6 +1,6 @@
 PACKAGES="fuse3 libwebsockets jansson gtest webfuse"
 
-fuse_VERSION=3.10.0
+fuse3_VERSION=3.10.0
 fuse3_URL=https://github.com/libfuse/libfuse/archive/fuse-${fuse3_VERSION}.tar.gz
 fuse3_MD5=22aec9bc9008eea6b17e203653d1b938
 fuse3_DIR=libfuse-fuse-${fuse3_VERSION}
