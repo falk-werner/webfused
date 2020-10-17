@@ -1,16 +1,16 @@
-PACKAGES="libfuse lws jansson gtest webfuse"
+PACKAGES="fuse3 libwebsockets jansson gtest webfuse"
 
-libfuse_VERSION=3.10.0
-libfuse_URL=https://github.com/libfuse/libfuse/archive/fuse-${libfuse_VERSION}.tar.gz
-libfuse_MD5=22aec9bc9008eea6b17e203653d1b938
-libfuse_DIR=libfuse-fuse-${libfuse_VERSION}
-libfuse_TYPE=meson
+fuse_VERSION=3.10.0
+fuse3_URL=https://github.com/libfuse/libfuse/archive/fuse-${fuse3_VERSION}.tar.gz
+fuse3_MD5=22aec9bc9008eea6b17e203653d1b938
+fuse3_DIR=libfuse-fuse-${fuse3_VERSION}
+fuse3_TYPE=meson
 
-lws_VERSION=4.1.3
-lws_URL=https://github.com/warmcat/libwebsockets/archive/v${lws_VERSION}.tar.gz
-lws_MD5=413cbe790ccb089001f53b2ee167b9c2
-lws_DIR=libwebsockets-${lws_VERSION}
-lws_TYPE=cmake
+libwebsockets_VERSION=4.1.3
+libwebsockets_URL=https://github.com/warmcat/libwebsockets/archive/v${libwebsockets_VERSION}.tar.gz
+libwebsockets_MD5=413cbe790ccb089001f53b2ee167b9c2
+libwebsockets_DIR=libwebsockets-${libwebsockets_VERSION}
+libwebsockets_TYPE=cmake
 
 jansson_VERSION=2.13.1
 jansson_URL=https://github.com/akheron/jansson/archive/v${jansson_VERSION}.tar.gz
