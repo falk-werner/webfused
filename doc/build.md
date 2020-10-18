@@ -12,7 +12,7 @@ To install dependecies, see below.
 - [webfuse](https://github.com/falk-werner/webfuse)
   - [libfuse](https://github.com/libfuse/libfuse/)
   - [libwebsockets](https://libwebsockets.org/)
-  - [jansson](https://github.com/akheron/jansson)
+- [jansson](https://github.com/akheron/jansson)
 - [openssl](https://www.openssl.org/)
 - [libconfig](https://hyperrealm.github.io/libconfig/)
 - [linux-pam](http://www.linux-pam.org/)
@@ -37,9 +37,9 @@ To install libfuse, meson is needed. Please refer to [meson quick guide](https:/
 
 ### libwebsockets
 
-    wget https://github.com/warmcat/libwebsockets/archive/v3.2.0.tar.gz -O libwebsockets.tar.gz
+    wget https://github.com/warmcat/libwebsockets/archive/v4.0.13.tar.gz -O libwebsockets.tar.gz
     tar -xf libwebsockets.tar.gz
-    cd libwebsockets-3.2.0
+    cd libwebsockets-4.0.13
     mkdir .build
     cd .build
     cmake ..

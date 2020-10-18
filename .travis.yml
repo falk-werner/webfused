@@ -36,7 +36,9 @@ env:
               
 
 before_install:
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib/x86_64-linux-gnu
     - sudo pip3 install --system meson
+    - bash <(curl -s https://raw.githubusercontent.com/falk-werner/install_deps/main/install_deps.sh) -s
 
 before_script:
     - meson -Dbuildtype=$BUILD_TYPE -Db_coverage=$COVERAGE build
@@ -44,7 +46,7 @@ before_script:
     - ninja
 
 script:
-    - meson test $CHECK_OPTS
+    - meson test --print-errorlogs -t 10 $CHECK_OPTS
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)  
