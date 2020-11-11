@@ -9,8 +9,8 @@
 #include <stdbool.h>
 
 
-#if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 5))
-#error "linconfig 1.5 or higher needed"
+#if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 4))
+#error "libconfig 1.5 or higher needed"
 #endif
 
 
@@ -31,7 +31,7 @@ wfd_config_check_version(
 
     if (WFD_CONFIG_VERSION_MAJOR != version_major)
     {
-        WFD_ERROR("failed to load config: " 
+        WFD_ERROR("failed to load config: "
             "incompatible versions: expected %d, but war %d",
             WFD_CONFIG_VERSION_MAJOR, version_major);
         return false;
@@ -163,7 +163,7 @@ wfd_config_read_authenticator(
     }
 
     char const * provider_name = NULL;
-    if (result) 
+    if (result)
     {
         int rc = config_setting_lookup_string(authenticator, "provider", &provider_name);
         if (CONFIG_TRUE != rc)
@@ -213,7 +213,7 @@ wfd_config_read_authentication(
             result = wfd_config_read_authenticator(authenticator, builder);
         }
     }
-    
+
     return result;
 }
 
@@ -272,7 +272,7 @@ wfd_config_read_user(
     struct wfd_config * builder)
 {
     bool result = true;
-    
+
     bool has_user = (NULL != config_lookup(config, "user"));
     if (has_user)
     {
@@ -318,12 +318,12 @@ wfd_config_load(
         && wfd_config_read_filesystems(config, result)
         && wfd_config_read_user(config, result)
         ;
-    
+
     if (success)
     {
         wfd_config_read_server(config, result);
     }
-    
+
     if (!success)
     {
         wfd_config_dispose(result);
@@ -348,13 +348,13 @@ wfd_config_load_file(
     }
     else
     {
-        WFD_ERROR("failed to load config: %s: %d: %s", 
+        WFD_ERROR("failed to load config: %s: %d: %s",
             config_error_file(&config),
             config_error_line(&config),
             config_error_text(&config));
     }
     config_destroy(&config);
-    
+
 
     return result;
 }
@@ -374,12 +374,12 @@ wfd_config_load_string(
     }
     else
     {
-        WFD_ERROR("failed to load config: %d: %s", 
+        WFD_ERROR("failed to load config: %d: %s",
             config_error_line(&config),
             config_error_text(&config));
     }
     config_destroy(&config);
-    
+
 
     return result;
 }
