@@ -5,7 +5,7 @@ without_userdb = get_option('without_userdb')
 
 c_compiler = meson.get_compiler('c')
 
-libconfig_dep = dependency('libconfig', version: '>=1.4')
+libconfig_dep = dependency('libconfig', version: '>=1.5')
 pam_dep = c_compiler.find_library('pam')
 
 libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.0')

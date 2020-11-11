@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 
-#if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 4))
+#if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 5))
 #error "libconfig 1.5 or higher needed"
 #endif
 
