@@ -24,7 +24,10 @@ wfd_string_list_init_copy(
         list->capacity = other->capacity;
         list->items = malloc(sizeof(char *) * list->capacity);
 
-        memcpy(list->items, other->items, (sizeof(char*) * list->size));
+        for(size_t i = 0; i < other->size; i++)
+        {
+            list->items[i] = strdup(other->items[i]);
+        }
     }
     else
     {

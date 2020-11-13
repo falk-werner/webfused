@@ -219,7 +219,7 @@ wfd_config_read_mountoptions(
     config_setting_t * filesystem,
     struct wfd_string_list * mount_options)
 {
-    config_setting_t * list = config_setting_get_member(filesystem, "mountpoint_options");
+    config_setting_t * list = config_setting_get_member(filesystem, "mount_options");
     if ((NULL != list) && (CONFIG_TRUE == config_setting_is_list(list)))
     {
         int length = config_setting_length(list);
