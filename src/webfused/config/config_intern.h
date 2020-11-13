@@ -12,6 +12,7 @@ extern "C"
 
 struct wfd_settings;
 struct wfd_config;
+struct wfd_string_list;
 
 extern struct wfd_config *
 wfd_config_create(void);
@@ -51,7 +52,8 @@ extern bool
 wfd_config_add_filesystem(
     struct wfd_config * config,
     char const * name,
-    char const * mount_point);
+    char const * mount_point,
+    struct wfd_string_list const * mount_options);
 
 extern bool
 wfd_config_set_logger(

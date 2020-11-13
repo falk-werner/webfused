@@ -19,7 +19,7 @@ public:
     virtual void wfd_config_set_server_cert(wfd_config * config, char const * cert_path) = 0;
     virtual void wfd_config_set_server_document_root(wfd_config * config, char const * document_root) = 0;
     virtual bool wfd_config_add_auth_provider(wfd_config * config, char const * provider, wfd_settings * settings) = 0;
-    virtual bool wfd_config_add_filesystem(wfd_config * config, char const * name, char const * mountpoint) = 0;
+    virtual bool wfd_config_add_filesystem(wfd_config * config, char const * name, char const * mountpoint, wfd_string_list const * mount_options) = 0;
     virtual bool wfd_config_set_logger(wfd_config * config, char const * provider, int level, wfd_settings * settings) = 0;
     virtual void wfd_config_set_user(wfd_config * config, char const * user, char const * group) = 0;
 };
@@ -37,7 +37,7 @@ public:
     MOCK_METHOD2(wfd_config_set_server_cert, void (wfd_config * config, char const * cert_path));
     MOCK_METHOD2(wfd_config_set_server_document_root, void (wfd_config * config, char const * document_root));
     MOCK_METHOD3(wfd_config_add_auth_provider, bool (wfd_config * config, char const * provider, wfd_settings * settings));
-    MOCK_METHOD3(wfd_config_add_filesystem, bool (wfd_config * config, char const * name, char const * mountpoint));
+    MOCK_METHOD4(wfd_config_add_filesystem, bool (wfd_config * config, char const * name, char const * mountpoint, wfd_string_list const * mount_options));
     MOCK_METHOD4(wfd_config_set_logger, bool (wfd_config * config, char const * provider, int level, wfd_settings * settings));
     MOCK_METHOD3(wfd_config_set_user, void (wfd_config * config, char const * user, char const * group));
 

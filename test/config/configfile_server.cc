@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "webfused/config/config.h"
 #include "webfused/config/factory.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
@@ -25,8 +26,8 @@ TEST(configfile_server, vhost_name)
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_set_server_vhostname(_,StrEq("some.host"))).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "server:\n"
         "{\n"
         "  vhost_name = \"some.host\"\n"
@@ -46,8 +47,8 @@ TEST(configfile_server, port)
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_set_server_port(_,54321)).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "server:\n"
         "{\n"
         "  port = 54321\n"
@@ -63,12 +64,12 @@ TEST(configfile_server, tls_certificate)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
-    StrictMock<MockConfigBuilder> builder;    
+    StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_set_server_cert(_, StrEq("/path/to/cert.pem"))).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "server:\n"
         "{\n"
         "  tls:\n"
@@ -87,12 +88,12 @@ TEST(configfile_server, tls_key)
     EXPECT_CALL(logger, log(_, _, _)).Times(0);
     EXPECT_CALL(logger, onclose()).Times(1);
 
-    StrictMock<MockConfigBuilder> builder;    
+    StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_set_server_key(_,StrEq("/path/to/key.pem"))).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "server:\n"
         "{\n"
         "  tls:\n"
@@ -113,10 +114,10 @@ TEST(configfile_server, document_root)
 
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, wfd_config_set_server_document_root(_,StrEq("/var/www"))).Times(1);    
+    EXPECT_CALL(builder, wfd_config_set_server_document_root(_,StrEq("/var/www"))).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "server:\n"
         "{\n"
         "  document_root = \"/var/www\"\n"

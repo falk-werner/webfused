@@ -112,8 +112,8 @@ wfd_config_add_auth_provider(
         if (result)
         {
             wf_server_config_add_authenticator(
-                config->server, 
-                wfd_authenticator_get_type(config->authenticator), 
+                config->server,
+                wfd_authenticator_get_type(config->authenticator),
                 config->authenticator.vtable->authenticate,
                 config->authenticator.data);
 
@@ -128,10 +128,11 @@ bool
 wfd_config_add_filesystem(
     struct wfd_config * config,
     char const * name,
-    char const * mount_point)
+    char const * mount_point,
+    struct wfd_string_list const * mount_options)
 {
     return wfd_mountpoint_factory_add_filesystem(
-        config->mountpoint_factory, name, mount_point);
+        config->mountpoint_factory, name, mount_point, mount_options);
 }
 
 bool
@@ -174,4 +175,3 @@ wfd_config_get_group(
 {
     return config->group;
 }
-

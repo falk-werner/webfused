@@ -5,7 +5,9 @@
 
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
+#include "webfused/util/string_list.h"
 #include "mock/logger.hpp"
+
 using ::webfused_test::MockLogger;
 using ::testing::_;
 
@@ -77,7 +79,8 @@ TEST(config, add_filesystem)
     wfd_config * config = wfd_config_create();
     ASSERT_NE(nullptr, config);
 
-    bool success = wfd_config_add_filesystem(config, "test", "/tmp/test");
+    struct wfd_string_list mount_options = {0, 0, nullptr};
+    bool success = wfd_config_add_filesystem(config, "test", "/tmp/test", &mount_options);
     ASSERT_TRUE(success);
 
     wfd_config_dispose(config);

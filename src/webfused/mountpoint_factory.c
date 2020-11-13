@@ -1,4 +1,5 @@
 #include "webfused/mountpoint_factory.h"
+#include "webfused/util/string_list.h"
 #include "webfused/log/log.h"
 
 #include <webfuse/mountpoint.h>
@@ -13,6 +14,7 @@ struct wfd_filesystem
 {
     char * name;
     char * mount_point;
+    struct wfd_string_list mount_options;
     bool in_use;
 };
 
@@ -40,7 +42,7 @@ wfd_mountpoint_factory_find(
     return NULL;
 }
 
-static void 
+static void
 wfd_mountpoint_factory_release_mountpoint(
     void * user_data)
 {
@@ -68,6 +70,7 @@ wfd_mountpoint_factory_dispose(
         struct wfd_filesystem * filesystem = &(factory->filesystems[i]);
         free(filesystem->name);
         free(filesystem->mount_point);
+        wfd_string_list_cleanup(&filesystem->mount_options);
     }
 
     free(factory->filesystems);
@@ -78,7 +81,8 @@ bool
 wfd_mountpoint_factory_add_filesystem(
     struct wfd_mountpoint_factory * factory,
     char const * name,
-    char const * mount_point)
+    char const * mount_point,
+    struct wfd_string_list const * mount_options)
 {
     bool result = (NULL == wfd_mountpoint_factory_find(factory, name));
     if (!result)
@@ -103,13 +107,14 @@ wfd_mountpoint_factory_add_filesystem(
         if (factory->count >= factory->capacity)
         {
             factory->capacity *= 2;
-            factory->filesystems = realloc(factory->filesystems, 
+            factory->filesystems = realloc(factory->filesystems,
                 sizeof(struct wfd_filesystem) * factory->capacity);
         }
 
         struct wfd_filesystem * actual = &(factory->filesystems[factory->count]);
         actual->name = strdup(name);
         actual->mount_point = path;
+        wfd_string_list_init_copy(&actual->mount_options, mount_options);
         actual->in_use = false;
         factory->count++;
     }
@@ -140,6 +145,10 @@ wfd_mountpoint_factory_create_mountpoint(
     struct wf_mountpoint * result = wf_mountpoint_create(fs->mount_point);
     wf_mountpoint_set_userdata(result,
         &fs->in_use, &wfd_mountpoint_factory_release_mountpoint);
+    for (size_t i = 0; i < fs->mount_options.size; i++)
+    {
+        wf_mountpoint_add_mountoption(result, fs->mount_options.items[i]);
+    }
 
     WFD_INFO("created mountpoint \'%s\' at path \'%s\'", filesystem, fs->mount_point);
     return result;

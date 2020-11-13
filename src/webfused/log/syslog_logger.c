@@ -118,6 +118,7 @@ wfd_syslog_logger_init(
     }
     else
     {
+        free(ident);
         WFD_ERROR("failed to init syslog logger: invalid log facility: \'%s\'", facility_str);
     }
 

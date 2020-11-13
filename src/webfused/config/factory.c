@@ -3,6 +3,7 @@
 #include "webfused/config/config.h"
 #include "webfused/config/settings_intern.h"
 #include "webfused/log/log.h"
+#include "webfused/util/string_list.h"
 
 #include <libconfig.h>
 #include <stdlib.h>
@@ -12,10 +13,6 @@
 #if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 5))
 #error "libconfig 1.5 or higher needed"
 #endif
-
-
-#define WFD_CONFIG_VERSION_MAJOR 1
-#define WFD_CONFIG_VERSION_MINOR 0
 
 static bool
 wfd_config_check_version(
@@ -217,6 +214,26 @@ wfd_config_read_authentication(
     return result;
 }
 
+static void
+wfd_config_read_mountoptions(
+    config_setting_t * filesystem,
+    struct wfd_string_list * mount_options)
+{
+    config_setting_t * list = config_setting_get_member(filesystem, "mountpoint_options");
+    if ((NULL != list) && (CONFIG_TRUE == config_setting_is_list(list)))
+    {
+        int length = config_setting_length(list);
+        for (int i = 0; i < length; i++)
+        {
+            char const * option = config_setting_get_string_elem(list, i);
+            if (NULL != option)
+            {
+                wfd_string_list_add(mount_options, option);
+            }
+        }
+    }
+}
+
 static bool
 wfd_config_read_filesystems(
     config_t * config,
@@ -255,7 +272,12 @@ wfd_config_read_filesystems(
                 break;
             }
 
-            result = wfd_config_add_filesystem(builder, name, mount_point);
+            struct wfd_string_list mount_options;
+            wfd_string_list_init(&mount_options);
+            wfd_config_read_mountoptions(fs, &mount_options);
+
+            result = wfd_config_add_filesystem(builder, name, mount_point, &mount_options);
+            wfd_string_list_cleanup(&mount_options);
             if (!result)
             {
                 break;

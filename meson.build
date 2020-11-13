@@ -1,4 +1,5 @@
-project('webfused', 'c', 'cpp', version: '0.6.0', license: 'LGPL-3.0+')
+project('webfused', 'c', 'cpp', version: '0.6.0', license: 'LGPL-3.0+',
+    default_options: ['c_std=gnu99', 'cpp_std=gnu++14'])
 
 without_tests = get_option('without_tests')
 without_userdb = get_option('without_userdb')
@@ -54,6 +55,7 @@ libwebfused = static_library('webfused',
 	'src/webfused/log/manager.c',
 	'src/webfused/log/stderr_logger.c',
 	'src/webfused/log/syslog_logger.c',
+    'src/webfused/util/string_list.c',
     include_directories: inc_dir,
     dependencies: [libuserdb_dep, webfuse_adapter_dep, libconfig_dep, pam_dep],
     install: false)
@@ -61,8 +63,7 @@ libwebfused = static_library('webfused',
 libwebfused_dep = declare_dependency(
     include_directories: inc_dir,
     link_with: libwebfused,
-    dependencies: [libuserdb_dep, webfuse_adapter_dep, libconfig_dep, pam_dep],
-    install: false)
+    dependencies: [libuserdb_dep, webfuse_adapter_dep, libconfig_dep, pam_dep])
 
 webfused = executable('webfused',
 	'src/webfused/main.c',
@@ -82,15 +83,15 @@ webfused_conf    = configure_file(input: 'etc/webfused.conf'    , output: 'webfu
 invalid_conf     = configure_file(input: 'test/invalid.conf'    , output: 'invalid.conf'    , copy: true)
 test_passwd_json = configure_file(input: 'test/test_passwd.json', output: 'test_passwd.json', copy: true)
 
-alltests = executable('alltests',
-	'test/mock/config_builder.cc',
-	'test/mock/logger.cc',
-	'test/mock/credentials.cc',
-	'test/mock/settings.cc',
-	'test/mock/pam.cc',
-	'test/mock/libconfig.cc',
-	'test/mock/linux.cc',
-	'test/mock/server.cc',
+alltests_sources = [
+    'test/mock/config_builder.cc',
+    'test/mock/logger.cc',
+    'test/mock/credentials.cc',
+    'test/mock/settings.cc',
+    'test/mock/pam.cc',
+    'test/mock/libconfig.cc',
+    'test/mock/linux.cc',
+    'test/mock/server.cc',
     'test/config/configfile.cc',
     'test/config/configfile_version.cc',
     'test/config/configfile_server.cc',
@@ -98,19 +99,29 @@ alltests = executable('alltests',
     'test/config/configfile_filesystem.cc',
     'test/config/configfile_log.cc',
     'test/config/configfile_user.cc',
-	'test/config/config.cc',
-	'test/config/settings.cc',
-	'test/auth/factory.cc',
-	'test/auth/file_authenticator.cc',
-	'test/auth/pam_authenticator.cc',
-	'test/log/log.cc',
-	'test/log/log_manager.cc',
-	'test/log/stderr_logger.cc',
-	'test/log/syslog_logger.cc',
-	'test/daemon.cc',
-	'test/change_user.cc',
-	'test/mountpoint_factory.cc',
-	'test/userdb.cc',
+    'test/config/config.cc',
+    'test/config/settings.cc',
+    'test/auth/factory.cc',
+    'test/auth/pam_authenticator.cc',
+    'test/log/log.cc',
+    'test/log/log_manager.cc',
+    'test/log/stderr_logger.cc',
+    'test/log/syslog_logger.cc',
+    'test/util/string_list.cc',
+    'test/daemon.cc',
+    'test/change_user.cc',
+    'test/mountpoint_factory.cc'
+]
+
+if not without_userdb
+    alltests_sources += [
+        'test/auth/file_authenticator.cc',
+        'test/userdb.cc'
+    ]
+endif
+
+alltests = executable('alltests',
+    alltests_sources,
     include_directories: ['src', 'test'],
     link_args: [
         '-Wl,--wrap=wf_credentials_type',

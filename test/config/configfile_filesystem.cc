@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "webfused/config/config.h"
 #include "webfused/config/factory.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
@@ -23,10 +24,10 @@ TEST(configfile_fs, filesystems)
 
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(1).WillOnce(Return(true));    
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(1).WillOnce(Return(true));
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
         "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
@@ -44,10 +45,10 @@ TEST(configfile_fs, filesystems_empty)
 
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(0);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
         ")\n"
@@ -65,13 +66,13 @@ TEST(configfile_fs, filesystems_failed_add)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(1).WillOnce(Return(false));    
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(1).WillOnce(Return(false));
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
-        "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
+        "  {name = \"foo\", mount_point = \"/tmp/test\", mount_options = () }\n"
         ")\n"
         ;
     struct wfd_config * config = wfd_config_load_string(config_text);
@@ -87,10 +88,10 @@ TEST(configfile_fs, filesystems_failed_missing_name)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(0);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
         "  {mount_point = \"/tmp/test\" }\n"
@@ -109,10 +110,10 @@ TEST(configfile_fs, filesystems_failed_missing_mountpoint)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(0);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
         "  {name = \"foo\"}\n"
@@ -131,16 +132,38 @@ TEST(configfile_fs, filesystems_failed_missing_elem)
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
-    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_, _)).Times(0);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(0);
 
     MockLibConfig libconfig;
     EXPECT_CALL(libconfig, config_setting_get_elem(_,_)).Times(1).WillOnce(Return(nullptr));
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "filesystems:\n"
         "(\n"
         "  {name = \"foo\", mount_point = \"/tmp/test\" }\n"
+        ")\n"
+        ;
+    struct wfd_config * config = wfd_config_load_string(config_text);
+    ASSERT_EQ(nullptr, config);
+}
+
+TEST(configfile_fs, filesystems_failed_add_options)
+{
+    MockLogger logger;
+    EXPECT_CALL(logger, log(_, _, _)).Times(0);
+    EXPECT_CALL(logger, onclose()).Times(1);
+
+    StrictMock<MockConfigBuilder> builder;
+    EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
+    EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
+    EXPECT_CALL(builder, wfd_config_add_filesystem(_,_,_,_)).Times(1).WillOnce(Return(false));
+
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
+        "filesystems:\n"
+        "(\n"
+        "  {name = \"foo\", mount_point = \"/tmp/test\", mount_options = (\"-o\", \"allow_other\") }\n"
         ")\n"
         ;
     struct wfd_config * config = wfd_config_load_string(config_text);
