@@ -12,7 +12,7 @@ pam_dep = c_compiler.find_library('pam')
 libwebsockets_dep = dependency('libwebsockets', version: '>=4.0.0')
 libfuse_dep = dependency('fuse3', version: '>=3.1.0')
 
-webfuse_adapter_dep = dependency('webfuse', version: '>=0.5.0')
+webfuse_adapter_dep = dependency('webfuse', version: '>=0.7.0')
 
 inc_dir = include_directories('src')
 

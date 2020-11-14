@@ -24,8 +24,8 @@ gtest_MD5=ecd1fa65e7de707cd5c00bdac56022cd
 gtest_DIR=googletest-release-${gtest_VERSION}
 gtest_TYPE=cmake
 
-webfuse_VERSION=0.5.1
+webfuse_VERSION=0.7.0
 webfuse_URL=https://github.com/falk-werner/webfuse/archive/v${webfuse_VERSION}.tar.gz
-webfuse_MD5=a2e0e9d24cf7bc2d2273b5c64788adca
+webfuse_MD5=4f8b69196a634016da3c0e4f63e13590
 webfuse_DIR=webfuse-${webfuse_VERSION}
 webfuse_TYPE=meson
