@@ -10,7 +10,6 @@
 #include <openssl/opensslv.h>
 #include <openssl/engine.h>
 #include <openssl/evp.h>
-#include <jansson.h>
 #include <userdb/userdb.h>
 
 
@@ -131,7 +130,7 @@ static int parse_args(struct args * args, int argc, char * argv[])
             fprintf(stderr, "error: missing command\n");
             args->show_help = true;
             result = EXIT_FAILURE;
-        }        
+        }
     }
 
     return result;

@@ -3,6 +3,7 @@
 #include "webfused/config/config.h"
 #include "webfused/config/settings_intern.h"
 #include "webfused/log/log.h"
+#include "webfused/util/string_list.h"
 
 #include <libconfig.h>
 #include <stdlib.h>
@@ -10,12 +11,8 @@
 
 
 #if ((LIBCONFIG_VER_MAJOR != 1) || (LIBCONFIG_VER_MINOR < 5))
-#error "linconfig 1.5 or higher needed"
+#error "libconfig 1.5 or higher needed"
 #endif
-
-
-#define WFD_CONFIG_VERSION_MAJOR 1
-#define WFD_CONFIG_VERSION_MINOR 0
 
 static bool
 wfd_config_check_version(
@@ -31,7 +28,7 @@ wfd_config_check_version(
 
     if (WFD_CONFIG_VERSION_MAJOR != version_major)
     {
-        WFD_ERROR("failed to load config: " 
+        WFD_ERROR("failed to load config: "
             "incompatible versions: expected %d, but war %d",
             WFD_CONFIG_VERSION_MAJOR, version_major);
         return false;
@@ -163,7 +160,7 @@ wfd_config_read_authenticator(
     }
 
     char const * provider_name = NULL;
-    if (result) 
+    if (result)
     {
         int rc = config_setting_lookup_string(authenticator, "provider", &provider_name);
         if (CONFIG_TRUE != rc)
@@ -213,8 +210,28 @@ wfd_config_read_authentication(
             result = wfd_config_read_authenticator(authenticator, builder);
         }
     }
-    
+
     return result;
+}
+
+static void
+wfd_config_read_mountoptions(
+    config_setting_t * filesystem,
+    struct wfd_string_list * mount_options)
+{
+    config_setting_t * list = config_setting_get_member(filesystem, "mount_options");
+    if ((NULL != list) && (CONFIG_TRUE == config_setting_is_list(list)))
+    {
+        int length = config_setting_length(list);
+        for (int i = 0; i < length; i++)
+        {
+            char const * option = config_setting_get_string_elem(list, i);
+            if (NULL != option)
+            {
+                wfd_string_list_add(mount_options, option);
+            }
+        }
+    }
 }
 
 static bool
@@ -255,7 +272,12 @@ wfd_config_read_filesystems(
                 break;
             }
 
-            result = wfd_config_add_filesystem(builder, name, mount_point);
+            struct wfd_string_list mount_options;
+            wfd_string_list_init(&mount_options);
+            wfd_config_read_mountoptions(fs, &mount_options);
+
+            result = wfd_config_add_filesystem(builder, name, mount_point, &mount_options);
+            wfd_string_list_cleanup(&mount_options);
             if (!result)
             {
                 break;
@@ -272,7 +294,7 @@ wfd_config_read_user(
     struct wfd_config * builder)
 {
     bool result = true;
-    
+
     bool has_user = (NULL != config_lookup(config, "user"));
     if (has_user)
     {
@@ -318,12 +340,12 @@ wfd_config_load(
         && wfd_config_read_filesystems(config, result)
         && wfd_config_read_user(config, result)
         ;
-    
+
     if (success)
     {
         wfd_config_read_server(config, result);
     }
-    
+
     if (!success)
     {
         wfd_config_dispose(result);
@@ -348,13 +370,13 @@ wfd_config_load_file(
     }
     else
     {
-        WFD_ERROR("failed to load config: %s: %d: %s", 
+        WFD_ERROR("failed to load config: %s: %d: %s",
             config_error_file(&config),
             config_error_line(&config),
             config_error_text(&config));
     }
     config_destroy(&config);
-    
+
 
     return result;
 }
@@ -374,12 +396,12 @@ wfd_config_load_string(
     }
     else
     {
-        WFD_ERROR("failed to load config: %d: %s", 
+        WFD_ERROR("failed to load config: %d: %s",
             config_error_line(&config),
             config_error_text(&config));
     }
     config_destroy(&config);
-    
+
 
     return result;
 }

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "webfused/config/config.h"
 #include "webfused/config/factory.h"
 #include "webfused/log/logger.h"
 #include "webfused/log/log.h"
@@ -23,10 +24,10 @@ TEST(configfile_user, set_user)
 
     StrictMock<MockConfigBuilder> builder;
     EXPECT_CALL(builder, wfd_config_create).Times(1).WillOnce(Return(builder.getBuilder()));
-    EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(1);   
+    EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(1);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "user:\n"
         "{\n"
         "  name  = \"webfused\"\n"
@@ -48,8 +49,8 @@ TEST(configfile_user, set_user_fail_missing_name)
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
     EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(0);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "user:\n"
         "{\n"
         "  group = \"webfused\"\n"
@@ -70,8 +71,8 @@ TEST(configfile_user, set_user_fail_missing_group)
     EXPECT_CALL(builder, wfd_config_dispose(_)).Times(1);
     EXPECT_CALL(builder, wfd_config_set_user(_, _, _)).Times(0);
 
-    char const config_text[] = 
-        "version = { major = 1, minor = 0 }\n"
+    char const config_text[] =
+        "version = { major = " WFD_CONFIG_VERSION_STR_MAJOR ", minor = " WFD_CONFIG_VERSION_STR_MINOR " }\n"
         "user:\n"
         "{\n"
         "  name = \"webfused\"\n"

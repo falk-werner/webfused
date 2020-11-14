@@ -6,6 +6,8 @@
 #include <syslog.h>
 #include <strings.h>
 
+#include <string.h>
+#include <stdlib.h>
 #include <stddef.h>
 
 static int
@@ -23,7 +25,7 @@ wfd_syslog_logger_to_priority(
     }
 }
 
-static void 
+static void
 wfd_syslog_logger_log(
     void * user_data,
     int level,
@@ -41,6 +43,7 @@ wfd_syslog_logger_close(
     void * user_data)
 {
     closelog();
+    free(user_data);
 }
 
 struct wfd_syslog_facility
@@ -97,7 +100,7 @@ wfd_syslog_logger_init(
     int level,
     struct wfd_settings * settings)
 {
-    char const * ident = wfd_settings_get_string_or_default(settings, "ident", "webfused");
+    char * ident = strdup(wfd_settings_get_string_or_default(settings, "ident", "webfused"));
     char const * facility_str = wfd_settings_get_string_or_default(settings, "facility", "daemon");
     bool log_pid = wfd_settings_get_bool(settings, "log_pid");
 
@@ -106,16 +109,17 @@ wfd_syslog_logger_init(
     if (result)
     {
         int options = (log_pid) ? LOG_PID : 0;
-        wfd_logger_init(level, 
-            &wfd_syslog_logger_log, 
-            &wfd_syslog_logger_close, 
-            NULL);
+        wfd_logger_init(level,
+            &wfd_syslog_logger_log,
+            &wfd_syslog_logger_close,
+            ident);
 
         openlog(ident, options, facility);
     }
     else
     {
-        WFD_ERROR("failed to init syslog logger: invalid log facility: \'%s\'", facility_str);        
+        free(ident);
+        WFD_ERROR("failed to init syslog logger: invalid log facility: \'%s\'", facility_str);
     }
 
     return result;

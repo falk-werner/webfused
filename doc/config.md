@@ -5,7 +5,7 @@ A config file is used to configure webfuse daemon.
 ## Config file
 
 ```
-version = { major = 1, minor = 0 }
+version = { major = 1, minor = 1 }
 
 server:
 {
@@ -35,7 +35,7 @@ authentication:
 
 filesystems:
 (
-    {name = "test",  mount_point = "/tmp/webfused" }
+    {name = "test",  mount_point = "/tmp/webfused", mount_options = () }
 )
 
 log:

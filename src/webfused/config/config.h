@@ -13,6 +13,12 @@ extern "C"
 {
 #endif
 
+#define WFD_CONFIG_VERSION_MAJOR 1
+#define WFD_CONFIG_VERSION_MINOR 1
+
+#define WFD_CONFIG_VERSION_STR_MAJOR "1"
+#define WFD_CONFIG_VERSION_STR_MINOR "1"
+
 struct wfd_config;
 struct wf_server_config;
 
